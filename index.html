@@ -11,7 +11,12 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@4.5.2/dist/cosmo/bootstrap.min.css"
         integrity="sha384-5QFXyVb+lrCzdN228VS3HmzpiE7ZVwLQtkt+0d9W43LQMzz4HBnnqvVxKg6O+04d" crossorigin="anonymous">
     <style>
-
+        .btn-check{
+            display:none;
+        }
+        .figure-img{
+            width:100%;
+        }
     </style>
 
     <!-- jQuery library -->
@@ -28,7 +33,7 @@
     <div id="app" class="container-fluid">
         <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
             <div class="container-fluid">
-                <a class="navbar-brand" href="#">Navbar</a>
+                <a class="navbar-brand" href="#">GENIUS 레기온</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01"
                     aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -36,41 +41,73 @@
 
                 <div class="collapse navbar-collapse" id="navbarColor01">
                     <ul class="navbar-nav me-auto">
-                        <li class="nav-item">
-                            <a class="nav-link active" href="#">Home
-                                <span class="visually-hidden">(current)</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Features</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Pricing</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">About</a>
-                        </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"
-                                aria-haspopup="true" aria-expanded="false">Dropdown</a>
-                            <div class="dropdown-menu">
-                                <a class="dropdown-item" href="#">Action</a>
-                                <a class="dropdown-item" href="#">Another action</a>
-                                <a class="dropdown-item" href="#">Something else here</a>
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="#">Separated link</a>
-                            </div>
+                        <li class="nav-item" v-for="m in menu">
+                            <a class="nav-link" :class="{active:m.active}" href="#"
+                                @click="selectMenu(m.name)">{{m.name}}</a>
                         </li>
                     </ul>
-                    <form class="d-flex">
-                        <input class="form-control me-sm-2" type="text" placeholder="Search">
-                        <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
-                    </form>
                 </div>
             </div>
         </nav>
 
-        <h1>{{txt}}</h1>
+        <div class="row mt-4">
+            <div class="col-md-10 offset-md-1">
+                <div class="alert alert-dismissible alert-warning">
+                    <h4 class="alert-heading">경고</h4>
+                    <p class="mb-0">이 시뮬레이션은 인게임과 동일하지 않으므로 재미로만 즐겨주시길 바랍니다.<br>인게임 실험을 통해 점차 확률을 개선시키고 있습니다.</p>
+                </div>
+            </div>
+        </div>
+
+        <div v-show="menu[0].active">
+            <div class="row">
+                <div class="col-md-10 offset-md-1">
+                    <h1>{{menu[0].name}}</h1>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3 offset-md-1">
+                    <h2>아이템 선택</h2>
+                </div>
+                <div class="col-md-7">
+                    <input type="text" v-on:input="typing" v-model="inputItemName" class="form-control" autocomplete="off">
+                    <ul v-show="itemFilterList.length > 0">
+                        <li v-for="item in itemFilterList" @click="changeSelectedItem(item);">{{item.name}}</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="row mt-5">
+                <div class="col-3 offset-1">
+                    <figure>
+                        <img class="figure-img img-thumbnail" src="./image/item_weapon.png">
+                        <figcaption class="figure-caption text-center">{{selectedItem.name}}</figcaption>
+                    </figure>
+                </div>
+                <div class="col-3">
+                    <figure>
+                        <img class="figure-img img-thumbnail" src="./image/item_pincer.png">
+                        <figcaption class="figure-caption text-center">추출 도구</figcaption>
+                    </figure>
+                </div>
+                <div class="col-1"></div>
+                <div class="col-3">
+                    <figure>
+                        <img class="figure-img img-thumbnail" src="./image/item_stone.png">
+                        <figcaption class="figure-caption text-center">?레벨 강화석</figcaption>
+                    </figure>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col"></div>                
+            </div>
+        </div>
+
+        <div class="row" v-show="menu[1].active">
+            <div class="col-md-10">
+                <h1>{{menu[1].name}}</h1>
+            </div>
+        </div>
     </div>
 
     <script src="https://unpkg.com/vue"></script>
@@ -78,7 +115,60 @@
         var app = new Vue({
             el: "#app",
             data: {
-                txt: "Hello VueJS",
+                title: "GENIUS 레기온",
+                menu: [{
+                        name: "장비 추출",
+                        active: true
+                    },
+                    {
+                        name: "장비 강화",
+                        active: false
+                    },
+                ],
+                inputItemName:"",
+                selectedItem:null,
+                itemList:[
+                    {name:"몰락한 고대신의 양손검", level:50, grade:"유일", type:"무기", code:""},
+                    {name:"몰락한 고대신의 장검", level:50, grade:"유일", type:"무기", code:""},
+                    {name:"몰락한 고대신의 판금 갑옷", level:50, grade:"유일", type:"상의", code:""},
+                    {name:"몰락한 고대신의 판금 각반", level:50, grade:"유일", type:"하의", code:""},
+                    {name:"몰락한 고대신의 판금 견갑", level:50, grade:"유일", type:"어깨", code:""},
+                    {name:"몰락한 고대신의 판금 장갑", level:50, grade:"유일", type:"장갑", code:""},
+                    {name:"몰락한 고대신의 판금 장화", level:50, grade:"유일", type:"신발", code:""},
+                ],
+                itemFilterList:[],
+            },
+            compute:{
+            },
+            watch:{
+                inputItemName:function(){
+                    this.itemChoice = false;
+                    this.filterItem();
+                },
+            },
+            methods: {
+                selectMenu: function(name) {
+                    this.menu.forEach(m => {
+                        m.active = m.name === name;
+                    });
+                },
+                filterItem : function(){
+                    if(!this.inputItemName){
+                        this.itemFilterList = [];
+                    }
+                    else{
+                        this.itemFilterList = this.itemList.filter(item=>item.name.startsWith(this.inputItemName));
+                    }
+                },
+                /* unicode 입력 감지 기능 */
+                typing:function(e){
+                    this.inputItemName = e.target.value;
+                },
+                changeSelectedItem:function(item){
+                    this.inputItemName = item.name;
+                    this.itemFilterList = [];
+                    this.selectedItem = item;
+                },
             },
         });
     </script>
