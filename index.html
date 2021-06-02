@@ -80,7 +80,7 @@
             <div class="row mt-5" v-if="selectedItem">
                 <div class="col-3 offset-1">
                     <figure>
-                        <img class="figure-img img-thumbnail" src="./image/item_weapon.png">
+                        <img class="figure-img img-thumbnail" :src="itemImage">
                         <figcaption class="figure-caption text-center">{{selectedItem.name}}</figcaption>
                     </figure>
                 </div>
@@ -91,7 +91,7 @@
                     </figure>
                 </div>
                 <div class="col-1 text-center">
-                    <button class="btn btn-warning" @click="startProgress">추출</button>
+                    
                 </div>
                 <div class="col-3">
                     <figure v-if="resultStone">
@@ -102,9 +102,12 @@
                         </figcaption>
                     </figure>
                 </div>
+                <div class="col-10 offset-1">
+                    <button class="btn btn-warning btn-block" @click="startProgress">추출</button>
+                </div>
             </div>
 
-            <div class="row" v-if="progress" v-if="selectedItem">
+            <div class="row mt-4" v-if="progress" v-if="selectedItem">
                 <div class="col-10 offset-1">
                     <div class="progress">
                         <div class="progress-bar" role="progressbar" :style="{width: progress + '%'}" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
@@ -166,18 +169,91 @@
                 inputItemName:"",
                 selectedItem:null,
                 itemList:[
-                    {name:"몰락한 고대신의 양손검", level:50, grade:"유일", type:"무기", code:"1"},
-                    {name:"몰락한 고대신의 장검", level:50, grade:"유일", type:"무기", code:"2"},
-                    {name:"몰락한 고대신의 판금 갑옷", level:50, grade:"유일", type:"상의", code:"3"},
-                    {name:"몰락한 고대신의 판금 각반", level:50, grade:"유일", type:"하의", code:"4"},
-                    {name:"몰락한 고대신의 판금 견갑", level:50, grade:"유일", type:"어깨", code:"5"},
-                    {name:"몰락한 고대신의 판금 장갑", level:50, grade:"유일", type:"장갑", code:"6"},
-                    {name:"몰락한 고대신의 판금 장화", level:50, grade:"유일", type:"신발", code:"7"},
+                    {name:"몰락한 고대신의 양손검", level:50, grade:"유일", type:"무기", subType:"양손검", code:"100900235", trade:true},
+                    {name:"몰락한 고대신의 검", level:50, grade:"유일", type:"무기", subType:"장검", code:"100000318", trade:true},
+                    {name:"몰락한 고대신의 단도", level:50, grade:"유일", type:"무기", subType:"단검", code:"100200339", trade:true},
+                    {name:"몰락한 고대신의 마법서", level:50, grade:"유일", type:"무기", subType:"법서", code:"100600258", trade:true},
+                    {name:"몰락한 고대신의 보옥", level:50, grade:"유일", type:"무기", subType:"보옥", code:"100500242", trade:true},
+                    {name:"몰락한 고대신의 장궁", level:50, grade:"유일", type:"무기", subType:"활", code:"101700256", trade:true},
+                    {name:"몰락한 고대신의 전투망치", level:50, grade:"유일", type:"무기", subType:"전곤", code:"100100231", trade:true},
+                    {name:"몰락한 고대신의 지팡이", level:50, grade:"유일", type:"무기", subType:"지팡이", code:"101500583", trade:true},
+                    {name:"몰락한 고대신의 창", level:50, grade:"유일", type:"무기", subType:"창", code:"101300232", trade:true},
+                    {name:"아누하르트 정예병의 마법서", level:50, grade:"유일", type:"무기", subType:"법서", code:"100600635", trade:false},
+                    {name:"아누하르트 정예병의 보옥", level:50, grade:"유일", type:"무기", subType:"보옥", code:"100500601", trade:false},
+                    {name:"아누하르트 정예병의 비늘검", level:50, grade:"유일", type:"무기", subType:"장검", code:"100000765", trade:false},
+                    {name:"아누하르트 정예병의 비수", level:50, grade:"유일", type:"무기", subType:"단검", code:"100200701", trade:false},
+                    {name:"아누하르트 정예병의 양손검", level:50, grade:"유일", type:"무기", subType:"양손검", code:"100900590", trade:false},
+                    {name:"아누하르트 정예병의 역린검", level:50, grade:"유일", type:"무기", subType:"장검", code:"100000766", trade:false},
+                    {name:"아누하르트 정예병의 장궁", level:50, grade:"유일", type:"무기", subType:"활", code:"101700619", trade:false},
+                    {name:"아누하르트 정예병의 전투망치", level:50, grade:"유일", type:"무기", subType:"전곤", code:"100100580", trade:false},
+                    {name:"아누하르트 정예병의 지팡이", level:50, grade:"유일", type:"무기", subType:"지팡이", code:"101500604", trade:false},
+                    {name:"아누하르트 정예병의 창", level:50, grade:"유일", type:"무기", subType:"창", code:"101300563", trade:false},
+                    {name:"아누하르트 정예병의 창린검", level:50, grade:"유일", type:"무기", subType:"장검", code:"100000767", trade:false},
+                    {name:"아누하르트 정예병의 단도", level:50, grade:"유일", type:"무기", subType:"단검", code:"100200700", trade:false},
+                    
+                    {name:"몰락한 고대신의 판금 흉갑", level:50, grade:"유일", type:"방어구", subType:"상의", extraType:"판금", code:"110600509", trade:true},
+                    {name:"몰락한 고대신의 판금 각반", level:50, grade:"유일", type:"방어구", subType:"하의", extraType:"판금", code:"113600476", trade:true},
+                    {name:"몰락한 고대신의 판금 견갑", level:50, grade:"유일", type:"방어구", subType:"어깨", extraType:"판금", code:"112600461", trade:true},
+                    {name:"몰락한 고대신의 판금 장갑", level:50, grade:"유일", type:"방어구", subType:"장갑", extraType:"판금", code:"111600480", trade:true},
+                    {name:"몰락한 고대신의 판금 장화", level:50, grade:"유일", type:"방어구", subType:"신발", extraType:"판금", code:"114600466", trade:true},
+                    
+                    {name:"", level:50, grade:"유일", type:"", subType:"", code:"", trade:false},
+                    
                 ],
                 progress:0,
                 resultStone:null,
             },
             compute:{
+                itemImage:function(){
+                    if(!this.selectedItem) return "";
+                    switch(this.selectedItem.subType){
+                        case "장검": return "./image/image-weapon-sword.png";
+                        case "단검": return "./image/image-weapon-dagger.png";
+                        case "양손검": return "./image/image-weapon-twohand.png";
+                        case "창": return "./image/image-weapon-lance.png";
+                        case "활": return "./image/image-weapon-bow.png";
+                        case "지팡이": return "./image/image-weapon-staff.png";
+                        case "법서": return "./image/image-weapon-spellbook.png";
+                        case "보옥": return "./image/image-weapon-orb.png";
+                        case "전곤": return "./image/image-weapon-mace.png";
+                        case "방패": return "./image/image-armor-shield.png";
+                        case "상의": 
+                            switch(this.selectedItem.extraType){
+                                case "판금": return "./image/image-armor-plate-01.png";
+                                case "사슬": return "./image/image-armor-chain-01.png";
+                                case "가죽": return "./image/image-armor-ladder-01.png";
+                                case "로브": return "./image/imnage-armor-robe-01.png";
+                            }
+                        case "하의": return "";
+                            switch(this.selectedItem.extraType){
+                                case "판금": return "./image/image-armor-plate-02.png";
+                                case "사슬": return "./image/image-armor-chain-02.png";
+                                case "가죽": return "./image/image-armor-ladder-02.png";
+                                case "로브": return "./image/imnage-armor-robe-02.png";
+                            }
+                        case "어깨": return "";
+                            switch(this.selectedItem.extraType){
+                                case "판금": return "./image/image-armor-plate-03.png";
+                                case "사슬": return "./image/image-armor-chain-03.png";
+                                case "가죽": return "./image/image-armor-ladder-03.png";
+                                case "로브": return "./image/imnage-armor-robe-03.png";
+                            }
+                        case "장갑": return "";
+                            switch(this.selectedItem.extraType){
+                                case "판금": return "./image/image-armor-plate-04.png";
+                                case "사슬": return "./image/image-armor-chain-04.png";
+                                case "가죽": return "./image/image-armor-ladder-04.png";
+                                case "로브": return "./image/imnage-armor-robe-04.png";
+                            }
+                        case "신발": return "";
+                            switch(this.selectedItem.extraType){
+                                case "판금": return "./image/image-armor-plate-05.png";
+                                case "사슬": return "./image/image-armor-chain-05.png";
+                                case "가죽": return "./image/image-armor-ladder-05.png";
+                                case "로브": return "./image/imnage-armor-robe-05.png";
+                            }
+                    }
+                },
             },
             watch:{
 
