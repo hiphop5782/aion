@@ -209,7 +209,7 @@
                             setTimeout(proc, second/100);
                         }
                         else{
-                            this.afterProgress();
+                            setTimeout(this.afterProgress, 500);
                         }
                     };
                     
