@@ -143,14 +143,17 @@
                         <li>일반 : +0 ~ +5 레벨</li>
                     </ul>
 
-                    <h6>강화석 수량(거래불가 반영 x)</h6>
+                    <h6>강화석 수량</h6>
                     <ul>
                         <li>영웅 : 다루지 않음</li>
-                        <li>유일 : 1 ~ 8개</li>
-                        <li>전승 : 1 ~ 6개</li>
-                        <li>희귀 : 1 ~ 4개</li>
-                        <li>일반 : 1 ~ 2개</li>
+                        <li>유일 : 무기(~8개), 상의/방패(~6개), 하의(~4개), 어장신(~3개)</li>
+                        <li>전승 : 미구현</li>
+                        <li>희귀 : 미구현</li>
+                        <li>일반 : 미구현</li>
                     </ul>
+
+                    <h6>확률분포</h6>
+                    <p>현재는 아이템 레벨을 평균으로 한 정규분포 우측 부분만 적용중입니다.</p>
                 </div>                
             </div>
         </div>
@@ -381,19 +384,21 @@
 
                 /* 추출 레벨 결정 */
                 generateStoneLevelVersion1:function(item){
-                    var levelBoundary = this.getStoneLevelBoundary(item.grade);
-                    var level = this.getRandom(item.level, item.level + levelBoundary);
+                    var levelBoundary = this.getStoneLevelBoundary(item);
+                    //var level = this.getRandom(item.level, item.level + levelBoundary);
+                    var level = this.getTruncGaussianRandom(item.level, item.level + levelBoundary);
                     return level;
                 },
                 /* 추출 개수 결정 */
                 generateStoneQuantityVersion1:function(item){
-                    var countBoundary = this.getStoneCountBoundary(item.grade);
-                    var count = this.getRandom(1, countBoundary);
+                    var countBoundary = this.getStoneCountBoundary(item);
+                    //var count = this.getRandom(1, countBoundary);
+                    var count = this.getTruncGaussianRandom(1, countBoundary);
                     return count;
                 },
 
-                getStoneLevelBoundary:function(grade){
-                    switch(grade){
+                getStoneLevelBoundary:function(item){
+                    switch(item.grade){
                         case "유일": return 40;
                         case "전승": return 20;
                         case "희귀": return 10;
@@ -401,12 +406,94 @@
                     }
                     return null;
                 },
-                getStoneCountBoundary:function(grade){
-                    switch(grade){
-                        case "유일": return 8;
-                        case "전승": return 6;
-                        case "희귀": return 4;
-                        case "일반": return 2;
+                getStoneCountBoundary:function(item){
+                    if(item.type === "무기"){
+                        if(item.trade){
+                            switch(item.grade){
+                                case "유일": return 8;
+                                case "전승": return 6;
+                                case "희귀": return 4;
+                                case "일반": return 2;
+                            }
+                        }
+                        else{
+                            switch(item.grade){
+                                case "유일": return 3;
+                                case "전승": return 2;
+                                case "희귀": return 1;
+                                case "일반": return 1;
+                            }
+                        }
+                    }
+                    else if(item.type === "방어구"){
+                        if(item.trade){
+                            if(item.subType === "방패"){
+                                switch(item.grade){
+                                    case "유일": return 6;
+                                    case "전승": return 4;
+                                    case "희귀": return 2;
+                                    case "일반": return 1;
+                                }
+                            }
+                            else if(item.subType === "상의"){
+                                switch(item.grade){
+                                    case "유일": return 6;
+                                    case "전승": return 4;
+                                    case "희귀": return 2;
+                                    case "일반": return 1;
+                                }
+                            }
+                            else if(item.subType === "하의"){
+                                switch(item.grade){
+                                    case "유일": return 4;
+                                    case "전승": return 3;
+                                    case "희귀": return 2;
+                                    case "일반": return 1;
+                                }
+                            }
+                            else{/*어장신*/
+                                switch(item.grade){
+                                    case "유일": return 3;
+                                    case "전승": return 2;
+                                    case "희귀": return 1;
+                                    case "일반": return 1;
+                                }
+                            }
+                        }
+                        else{
+                            if(item.subType === "방패"){
+                                switch(item.grade){
+                                    case "유일": return 2;
+                                    case "전승": return 1;
+                                    case "희귀": return 1;
+                                    case "일반": return 1;
+                                }
+                            }
+                            else if(item.subType === "상의"){
+                                switch(item.grade){
+                                    case "유일": return 2;
+                                    case "전승": return 1;
+                                    case "희귀": return 1;
+                                    case "일반": return 1;
+                                }
+                            }
+                            else if(item.subType === "하의"){
+                                switch(item.grade){
+                                    case "유일": return 2;
+                                    case "전승": return 1;
+                                    case "희귀": return 1;
+                                    case "일반": return 1;
+                                }
+                            }
+                            else{/*어장신*/
+                                switch(item.grade){
+                                    case "유일": return 1;
+                                    case "전승": return 1;
+                                    case "희귀": return 1;
+                                    case "일반": return 1;
+                                }
+                            }
+                        }
                     }
                     return null;
                 },
@@ -417,6 +504,37 @@
                     var number = Math.floor(Math.random() * range) + s;
                     return number;
                 },
+                getRayleighRandom:function(start, end){
+                    var s = Math.min(start, end);
+                    var e = Math.max(start, end);
+                    var range = e - s + 1;
+                    return Math.floor(Math.sqrt(-2 * Math.log(1 - Math.random())) * range) + s;
+                },
+                getTruncGaussianRandom:function(start, end){
+                    var s = Math.min(start, end);
+                    var e = Math.max(start, end);
+                    var range = e - s + 1;
+                    var rnd = Math.abs(this.getGaussianRandom());
+                    var val = Math.floor(rnd * range) + s;
+                    if(val > end) return this.getTruncGaussianRandom(start, end);
+                    return val;
+                },
+                getGaussianRandom:function(){
+                    var v1, v2, s;
+
+                    do{
+                        v1 = 2 * Math.random() - 1;
+                        v2 = 2 * Math.random() - 1;
+                        s = Math.pow(v1, 2) + Math.pow(v2, 2);
+                    }
+                    while(s >= 1 || s == 0);
+
+                    s = Math.sqrt( (-2 * Math.log(s)) / s );
+
+                    var rv = v1 * s;
+
+                    return rv;
+                }
             },
         });
     </script>
