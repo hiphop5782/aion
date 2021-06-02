@@ -17,6 +17,13 @@
         .figure-img{
             width:100%;
         }
+        figure > .qty {
+            position:absolute;
+            right:10%;
+            bottom:20%;
+            font-size: 1.2rem;
+            color: white;
+        }
     </style>
 
     <!-- jQuery library -->
@@ -73,14 +80,14 @@
                 <div class="col-md-7">
                     <select v-model="inputItemName" class="form-control" @change="choiceItem">
                         <option value="">선택</option>
-                        <option v-for="item in itemList">{{item.name}}</option>
+                        <option v-for="item in itemList" :value="item.code">{{item.name}}</option>
                     </select>
                 </div>
             </div>
             <div class="row mt-5" v-if="selectedItem">
                 <div class="col-3 offset-1">
                     <figure>
-                        <img class="figure-img img-thumbnail" :src="itemImage">
+                        <img class="figure-img img-thumbnail" :src="selectedItem.image">
                         <figcaption class="figure-caption text-center">{{selectedItem.name}}</figcaption>
                     </figure>
                 </div>
@@ -100,6 +107,7 @@
                         <figcaption class="figure-caption text-center">
                             {{resultStone.level}}레벨 강화석 ({{resultStone.count}})
                         </figcaption>
+                        <figcaption class="qty">{{resultStone.count}}</figcaption>
                     </figure>
                 </div>
                 <div class="col-10 offset-1">
@@ -204,56 +212,7 @@
                 resultStone:null,
             },
             compute:{
-                itemImage:function(){
-                    if(!this.selectedItem) return "";
-                    switch(this.selectedItem.subType){
-                        case "장검": return "./image/image-weapon-sword.png";
-                        case "단검": return "./image/image-weapon-dagger.png";
-                        case "양손검": return "./image/image-weapon-twohand.png";
-                        case "창": return "./image/image-weapon-lance.png";
-                        case "활": return "./image/image-weapon-bow.png";
-                        case "지팡이": return "./image/image-weapon-staff.png";
-                        case "법서": return "./image/image-weapon-spellbook.png";
-                        case "보옥": return "./image/image-weapon-orb.png";
-                        case "전곤": return "./image/image-weapon-mace.png";
-                        case "방패": return "./image/image-armor-shield.png";
-                        case "상의": 
-                            switch(this.selectedItem.extraType){
-                                case "판금": return "./image/image-armor-plate-01.png";
-                                case "사슬": return "./image/image-armor-chain-01.png";
-                                case "가죽": return "./image/image-armor-ladder-01.png";
-                                case "로브": return "./image/imnage-armor-robe-01.png";
-                            }
-                        case "하의": return "";
-                            switch(this.selectedItem.extraType){
-                                case "판금": return "./image/image-armor-plate-02.png";
-                                case "사슬": return "./image/image-armor-chain-02.png";
-                                case "가죽": return "./image/image-armor-ladder-02.png";
-                                case "로브": return "./image/imnage-armor-robe-02.png";
-                            }
-                        case "어깨": return "";
-                            switch(this.selectedItem.extraType){
-                                case "판금": return "./image/image-armor-plate-03.png";
-                                case "사슬": return "./image/image-armor-chain-03.png";
-                                case "가죽": return "./image/image-armor-ladder-03.png";
-                                case "로브": return "./image/imnage-armor-robe-03.png";
-                            }
-                        case "장갑": return "";
-                            switch(this.selectedItem.extraType){
-                                case "판금": return "./image/image-armor-plate-04.png";
-                                case "사슬": return "./image/image-armor-chain-04.png";
-                                case "가죽": return "./image/image-armor-ladder-04.png";
-                                case "로브": return "./image/imnage-armor-robe-04.png";
-                            }
-                        case "신발": return "";
-                            switch(this.selectedItem.extraType){
-                                case "판금": return "./image/image-armor-plate-05.png";
-                                case "사슬": return "./image/image-armor-chain-05.png";
-                                case "가죽": return "./image/image-armor-ladder-05.png";
-                                case "로브": return "./image/imnage-armor-robe-05.png";
-                            }
-                    }
-                },
+                
             },
             watch:{
 
@@ -269,10 +228,66 @@
                     this.inputItemName = e.target.value;
                 },
                 choiceItem:function(){
+                    this.selectItem = null;
+
                     for(var i=0; i < this.itemList.length; i++){
-                        if(this.itemList[i].name = this.inputItemName){
-                            this.selectedItem = this.itemList[i];
+                        if(this.itemList[i].code === this.inputItemName){
+                            this.selectedItem = Object.assign({}, this.itemList[i]);
+                            break;
                         }
+                    }
+
+                    this.selectedItem.image = this.choiceItemImage();
+                },
+                choiceItemImage:function(){
+                    if(!this.selectedItem) return "";
+                    console.log(this.selectedItem.subType);
+                    switch(this.selectedItem.subType){
+                        case "장검": return "./image/item-weapon-sword.png";
+                        case "단검": return "./image/item-weapon-dagger.png";
+                        case "양손검": return "./image/item-weapon-twohand.png";
+                        case "창": return "./image/item-weapon-lance.png";
+                        case "활": return "./image/item-weapon-bow.png";
+                        case "지팡이": return "./image/item-weapon-staff.png";
+                        case "법서": return "./image/item-weapon-spellbook.png";
+                        case "보옥": return "./image/item-weapon-orb.png";
+                        case "전곤": return "./image/item-weapon-mace.png";
+                        case "방패": return "./image/item-armor-shield.png";
+                        case "상의": 
+                            switch(this.selectedItem.extraType){
+                                case "판금": return "./image/item-armor-plate-01.png";
+                                case "사슬": return "./image/item-armor-chain-01.png";
+                                case "가죽": return "./image/item-armor-ladder-01.png";
+                                case "로브": return "./image/imnage-armor-robe-01.png";
+                            }
+                        case "하의": return "";
+                            switch(this.selectedItem.extraType){
+                                case "판금": return "./image/item-armor-plate-02.png";
+                                case "사슬": return "./image/item-armor-chain-02.png";
+                                case "가죽": return "./image/item-armor-ladder-02.png";
+                                case "로브": return "./image/imnage-armor-robe-02.png";
+                            }
+                        case "어깨": return "";
+                            switch(this.selectedItem.extraType){
+                                case "판금": return "./image/item-armor-plate-03.png";
+                                case "사슬": return "./image/item-armor-chain-03.png";
+                                case "가죽": return "./image/item-armor-ladder-03.png";
+                                case "로브": return "./image/imnage-armor-robe-03.png";
+                            }
+                        case "장갑": return "";
+                            switch(this.selectedItem.extraType){
+                                case "판금": return "./image/item-armor-plate-04.png";
+                                case "사슬": return "./image/item-armor-chain-04.png";
+                                case "가죽": return "./image/item-armor-ladder-04.png";
+                                case "로브": return "./image/imnage-armor-robe-04.png";
+                            }
+                        case "신발": return "";
+                            switch(this.selectedItem.extraType){
+                                case "판금": return "./image/item-armor-plate-05.png";
+                                case "사슬": return "./image/item-armor-chain-05.png";
+                                case "가죽": return "./image/item-armor-ladder-05.png";
+                                case "로브": return "./image/imnage-armor-robe-05.png";
+                            }
                     }
                 },
                 startProgress:function(second){
