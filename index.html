@@ -11,24 +11,29 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@4.5.2/dist/cosmo/bootstrap.min.css"
         integrity="sha384-5QFXyVb+lrCzdN228VS3HmzpiE7ZVwLQtkt+0d9W43LQMzz4HBnnqvVxKg6O+04d" crossorigin="anonymous">
     <style>
-        .btn-check{
-            display:none;
+        .btn-check {
+            display: none;
         }
-        .figure-img{
-            width:100%;
+
+        .figure-img {
+            width: 100%;
         }
-        figure > .qty, figure > .lev {
-            position:absolute;
-            right:10%;
-            bottom:20%;
+
+        figure>.qty,
+        figure>.lev {
+            position: absolute;
+            right: 10%;
+            bottom: 20%;
             font-size: 1.2rem;
             color: white;
         }
-        .result.success{
-            color:blue;
+
+        .result.success {
+            color: blue;
         }
-        .result{
-            color:red;
+
+        .result {
+            color: red;
         }
     </style>
 
@@ -43,249 +48,259 @@
 </head>
 
 <body>
-    <div id="app" class="container-fluid" style="margin-bottom: 200px;">
-        <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-            <div class="container-fluid">
-                <a class="navbar-brand" href="https://aion.plaync.com/legions/server/24/id/2548/home">GENIUS 레기온</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01"
-                    aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
+    <div id="app" style="margin-bottom: 200px;">
+        <nav class="navbar navbar-expand-md bg-dark navbar-dark">
+            <!-- Brand -->
+            <a class="navbar-brand" href="#">GENIUS Legion</a>
 
-                <div class="collapse navbar-collapse" id="navbarColor01">
-                    <ul class="navbar-nav me-auto">
-                        <li class="nav-item" v-for="m in menu">
-                            <a class="nav-link" :class="{active:m.active}" href="#"
-                                @click="selectMenu(m.name)">{{m.name}}</a>
-                        </li>
-                    </ul>
-                </div>
+            <!-- Toggler/collapsibe Button -->
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- Navbar links -->
+            <div class="collapse navbar-collapse" id="collapsibleNavbar">
+                <ul class="navbar-nav">
+                    <li class="nav-item" v-for="m in menu">
+                        <a class="nav-link" :class="{active:m.active}" href="#"
+                            @click="selectMenu(m.name)">{{m.name}}</a>
+                    </li>
+                </ul>
             </div>
         </nav>
-
-        <div class="row mt-4">
-            <div class="col-md-10 offset-md-1">
-                <div class="alert alert-dismissible alert-warning">
-                    <h4 class="alert-heading">경고</h4>
-                    <p class="mb-0">이 시뮬레이션은 인게임과 동일하지 않으므로 재미로만 즐겨주시길 바랍니다.<br>인게임 실험을 통해 점차 확률을 개선시키고 있습니다.</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- 아이템 추출 -->
-        <div v-show="menu[0].active">
-            <div class="row">
+        <div class="container-fluid">
+            <div class="row mt-4">
                 <div class="col-md-10 offset-md-1">
-                    <h1>{{menu[0].name}}</h1>
-                </div>
-            </div>
-            <hr>
-            <div class="row mt-5">
-                <div class="col-md-3 offset-md-1">
-                    <h2>아이템 선택</h2>
-                </div>
-                <div class="col-md-7">
-                    <select v-model="inputItemName" class="form-control" @change="choiceItem">
-                        <option value="">선택</option>
-                        <option v-for="item in itemList" :value="item.code">
-                            [{{item.level}}]
-                            {{item.name}}
-                        </option>
-                    </select>
-                </div>
-            </div>
-            <div class="row mt-5" v-if="selectedItem">
-                <div class="col-3 offset-1">
-                    <figure>
-                        <img class="figure-img img-thumbnail" :src="selectedItem.image">
-                        <figcaption class="figure-caption text-center">{{selectedItem.name}}</figcaption>
-                    </figure>
-                </div>
-                <div class="col-3">
-                    <figure>
-                        <img class="figure-img img-thumbnail" src="./image/item_pincer.png">
-                        <figcaption class="figure-caption text-center">추출 도구</figcaption>
-                    </figure>
-                </div>
-                <div class="col-1 text-center">
-                    
-                </div>
-                <div class="col-3">
-                    <figure v-if="resultStone">
-                        <img class="figure-img img-thumbnail" :src="'./image/item_stone_'+(parseInt((resultStone.level-1) / 20))+'.png'">
-                        
-                        <figcaption class="figure-caption text-center">
-                            {{resultStone.level}}레벨 강화석 ({{resultStone.count}})
-                        </figcaption>
-                        <figcaption class="qty">{{resultStone.count}}</figcaption>
-                    </figure>
-                </div>
-                <div class="col-md-10 offset-md-1">
-                    <button class="btn btn-warning btn-block" @click="startProgress">추출</button>
-                </div>
-            </div>
-
-            <div class="row mt-4" v-if="progress" v-if="selectedItem">
-                <div class="col-md-10 offset-md-1">
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" :style="{width: progress + '%'}" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                    <div class="alert alert-dismissible alert-warning">
+                        <h4 class="alert-heading">경고</h4>
+                        <p class="mb-0">이 시뮬레이션은 인게임과 동일하지 않으므로 재미로만 즐겨주시길 바랍니다.<br>인게임 실험을 통해 점차 확률을 개선시키고 있습니다.</p>
                     </div>
-                    <h6 class="text-center mt-2">{{progress===100?'추출 완료':'추출 중'}}</h6>
                 </div>
             </div>
 
-            <hr>
-            <div class="row">
-                <div class="col-md-10 offset-md-1">
-                    <h5>추출 계산 공식</h5>
-                    <p>
-                        아이온 파워북 설명에 기반하며, 실험 데이터가 수집되면 반영할 계획입니다.<br>
-                        아이온 아이템 추출 시 강화석 수량이나 레벨은 아이템의 강화 수치와는 무관합니다(공식발표)
-                    </p>
-                    <h6>강화석 레벨 범위</h6>
-                    <ul>
-                        <li>영웅 : 다루지 않음</li>
-                        <li>유일 : +0 ~ +40 레벨</li>
-                        <li>전승 : +0 ~ +20 레벨</li>
-                        <li>희귀 : +0 ~ +10 레벨</li>
-                        <li>일반 : +0 ~ +5 레벨</li>
-                    </ul>
-
-                    <h6>강화석 수량</h6>
-                    <ul>
-                        <li>영웅 : 다루지 않음</li>
-                        <li>유일 : 
-                            <ul>
-                                <li>영각템 : 무기(~8개), 상의/방패(~6개), 하의(~4개), 어장신(~3개)</li>
-                                <li>거래불가템 : 무기(~3개), 상의/방패/하의(~2개), 어장신(~1개)</li>
-                            </ul>
-                        </li>
-                        <li>전승 : 미구현</li>
-                        <li>희귀 : 미구현</li>
-                        <li>일반 : 미구현</li>
-                    </ul>
-
-                    <h6>확률분포</h6>
-                    <p>현재는 아이템 레벨을 평균으로 한 정규분포 우측 부분만 적용중입니다.</p>
-                </div>                
-            </div>
-        </div>
-
-        <!-- 아이템 강화 -->
-        <div v-show="menu[1].active">
-            <div class="row">
-                <div class="col-md-10 offset-md-1">
-                    <h1>{{menu[1].name}}</h1>
-                </div>
-            </div>
-
-            <div class="row mt-5">
-                <div class="col-md-3 offset-md-1">
-                    <h2>아이템 선택</h2>
-                </div>
-                <div class="col-md-7">
-                    <select v-model="inputItemName" class="form-control" @change="choiceItem">
-                        <option value="">선택</option>
-                        <option v-for="item in itemList" :value="item.code">
-                            [{{item.level}}]
-                            {{item.name}}
-                        </option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="row mt-5" v-if="selectedItem">
-                <div class="col-md-3 offset-md-1">
-                    <h2>강화 레벨 선택</h2>
-                </div>
-                <div class="col-md-7">
-                    <select v-model="currentItemLevel" class="form-control">
-                        <option v-for="(v, i) in 16">{{i}}</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="row mt-5" v-if="selectedItem">
-                <div class="col-md-3 offset-md-1">
-                    <h2>강화석 선택</h2>
-                </div>
-                <div class="col-md-7">
-                    <select v-model="enchantStoneLevel" class="form-control">
-                        <option v-for="(v,i) in (101-selectedItem.level)">{{i + selectedItem.level}}</option>
-                    </select>
-                </div>
-            </div>
-
-            <hr>
-
-            <div class="row mt-5" v-if="selectedItem">
-                <div class="col-3 offset-1">
-                    <figure>
-                        <img class="figure-img img-thumbnail" :src="selectedItem.image">
-                        <figcaption class="figure-caption text-center">
-                            +{{currentItemLevel}} 
-                            {{selectedItem.name}}
-                        </figcaption>
-                        <figcaption class="lev">+{{currentItemLevel}}</figcaption>
-                    </figure>
-                </div>
-                <div class="col-3">
-                    <figure v-if="enchantStoneLevel > 0">
-                        <img class="figure-img img-thumbnail" :src="'./image/item_stone_'+(parseInt((enchantStoneLevel-1) / 20))+'.png'">
-                        
-                        <figcaption class="figure-caption text-center">
-                            {{enchantStoneLevel}}레벨 강화석
-                        </figcaption>
-                    </figure>
-                </div>
-                <div class="col-1"></div>
-                <div class="col-3">
-                    <figure v-if="resultItemLevel != null">
-                        <img class="figure-img img-thumbnail" :src="selectedItem.image" :style="'box-shadow: 0 0 10px 3px ' + (enchantResult ? 'blue' : 'red')">
-                        <figcaption class="figure-caption text-center">
-                            +{{resultItemLevel}} 
-                            {{selectedItem.name}}
-                        </figcaption>
-                        <figcaption class="lev">+{{resultItemLevel}}</figcaption>
-                    </figure>
-                </div>
-                <div class="col-md-10 offset-md-1 text-right" v-if="enchantReady">
-                    <button class="btn btn-warning" @click="startEnchantProgress" v-if="currentItemLevel < 15" :disabled="resultItemLevel != null && enchantProgress < 100">강화</button>
-                    <button class="btn btn-danger" @click="startEnchantProgress2" v-if="resultItemLevel != null && currentItemLevel < 15">계속 강화</button>
-                </div>
-            </div>
-
-            <div class="row mt-4" v-if="enchantProgress" v-if="selectedItem">
-                <div class="col-md-10 offset-md-1">
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" :style="{width: enchantProgress + '%'}" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+            <!-- 아이템 추출 -->
+            <div v-show="menu[0].active">
+                <div class="row">
+                    <div class="col-md-10 offset-md-1">
+                        <h1>{{menu[0].name}}</h1>
                     </div>
-                    <h6 class="text-center mt-2 result" v-if="resultItemLevel != null" :class="{success:enchantResult}">
-                        {{enchantResultText}}
-                    </h6>
+                </div>
+                <hr>
+                <div class="row mt-5">
+                    <div class="col-md-3 offset-md-1">
+                        <h2>아이템 선택</h2>
+                    </div>
+                    <div class="col-md-7">
+                        <select v-model="inputItemName" class="form-control" @change="choiceItem">
+                            <option value="">선택</option>
+                            <option v-for="item in itemList" :value="item.code">
+                                [{{item.level}}]
+                                {{item.name}}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row mt-5" v-if="selectedItem">
+                    <div class="col-3 offset-1">
+                        <figure>
+                            <img class="figure-img img-thumbnail" :src="selectedItem.image">
+                            <figcaption class="figure-caption text-center">{{selectedItem.name}}</figcaption>
+                        </figure>
+                    </div>
+                    <div class="col-3">
+                        <figure>
+                            <img class="figure-img img-thumbnail" src="./image/item_pincer.png">
+                            <figcaption class="figure-caption text-center">추출 도구</figcaption>
+                        </figure>
+                    </div>
+                    <div class="col-1 text-center">
+
+                    </div>
+                    <div class="col-3">
+                        <figure v-if="resultStone">
+                            <img class="figure-img img-thumbnail"
+                                :src="'./image/item_stone_'+(parseInt((resultStone.level-1) / 20))+'.png'">
+
+                            <figcaption class="figure-caption text-center">
+                                {{resultStone.level}}레벨 강화석 ({{resultStone.count}})
+                            </figcaption>
+                            <figcaption class="qty">{{resultStone.count}}</figcaption>
+                        </figure>
+                    </div>
+                    <div class="col-md-10 offset-md-1">
+                        <button class="btn btn-warning btn-block" @click="startProgress">추출</button>
+                    </div>
+                </div>
+
+                <div class="row mt-4" v-if="progress" v-if="selectedItem">
+                    <div class="col-md-10 offset-md-1">
+                        <div class="progress">
+                            <div class="progress-bar" role="progressbar" :style="{width: progress + '%'}"
+                                aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <h6 class="text-center mt-2">{{progress===100?'추출 완료':'추출 중'}}</h6>
+                    </div>
+                </div>
+
+                <hr>
+                <div class="row">
+                    <div class="col-md-10 offset-md-1">
+                        <h5>추출 계산 공식</h5>
+                        <p>
+                            아이온 파워북 설명에 기반하며, 실험 데이터가 수집되면 반영할 계획입니다.<br>
+                            아이온 아이템 추출 시 강화석 수량이나 레벨은 아이템의 강화 수치와는 무관합니다(공식발표)
+                        </p>
+                        <h6>강화석 레벨 범위</h6>
+                        <ul>
+                            <li>영웅 : 다루지 않음</li>
+                            <li>유일 : +0 ~ +40 레벨</li>
+                            <li>전승 : +0 ~ +20 레벨</li>
+                            <li>희귀 : +0 ~ +10 레벨</li>
+                            <li>일반 : +0 ~ +5 레벨</li>
+                        </ul>
+
+                        <h6>강화석 수량</h6>
+                        <ul>
+                            <li>영웅 : 다루지 않음</li>
+                            <li>유일 :
+                                <ul>
+                                    <li>영각템 : 무기(~8개), 상의/방패(~6개), 하의(~4개), 어장신(~3개)</li>
+                                    <li>거래불가템 : 무기(~3개), 상의/방패/하의(~2개), 어장신(~1개)</li>
+                                </ul>
+                            </li>
+                            <li>전승 : 미구현</li>
+                            <li>희귀 : 미구현</li>
+                            <li>일반 : 미구현</li>
+                        </ul>
+
+                        <h6>확률분포</h6>
+                        <p>현재는 아이템 레벨을 평균으로 한 정규분포 우측 부분만 적용중입니다.</p>
+                    </div>
                 </div>
             </div>
-            <hr>
-            <div class="row">
-                <div class="col-md-10 offset-md-1">
-                    <h5>강화 계산 공식</h5>
-                    <p>
-                        상상과 경험에 기반한 근거 없는 계산 공식입니다.<br>
-                        많은 의견 바랍니다.
-                    </p>
-                    <h6>기본 적용 확률</h6>
-                    <ul>
-                        <li>영웅 : 다루지 않음</li>
-                        <li>유일 : 20레벨 차이나는 강화석으로 강화할 경우 50%로 설정</li>
-                        <li>전승 : 15레벨 차이나는 강화석으로 강화할 경우 50%로 설정</li>
-                        <li>희귀 : 10레벨 차이나는 강화석으로 강화할 경우 50%로 설정</li>
-                        <li>일반 : 5레벨 차이나는 강화석으로 강화할 경우 50%로 설정</li>
-                    </ul>
 
-                    강화석 레벨 1당 2%씩 증가 혹은 감소하도록 설정<br>
-                    아이온의 강화 확률은 공개되어 있지 않기 때문에 실험을 기반으로 추측하여 적용시킬 계획입니다.<br><br>
-        
-                </div>                
+            <!-- 아이템 강화 -->
+            <div v-show="menu[1].active">
+                <div class="row">
+                    <div class="col-md-10 offset-md-1">
+                        <h1>{{menu[1].name}}</h1>
+                    </div>
+                </div>
+
+                <div class="row mt-5">
+                    <div class="col-md-3 offset-md-1">
+                        <h2>아이템 선택</h2>
+                    </div>
+                    <div class="col-md-7">
+                        <select v-model="inputItemName" class="form-control" @change="choiceItem">
+                            <option value="">선택</option>
+                            <option v-for="item in itemList" :value="item.code">
+                                [{{item.level}}]
+                                {{item.name}}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row mt-5" v-if="selectedItem">
+                    <div class="col-md-3 offset-md-1">
+                        <h2>강화 레벨 선택</h2>
+                    </div>
+                    <div class="col-md-7">
+                        <select v-model="currentItemLevel" class="form-control">
+                            <option v-for="(v, i) in 16">{{i}}</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row mt-5" v-if="selectedItem">
+                    <div class="col-md-3 offset-md-1">
+                        <h2>강화석 선택</h2>
+                    </div>
+                    <div class="col-md-7">
+                        <select v-model="enchantStoneLevel" class="form-control">
+                            <option v-for="(v,i) in (101-selectedItem.level)">{{i + selectedItem.level}}</option>
+                        </select>
+                    </div>
+                </div>
+
+                <hr>
+
+                <div class="row mt-5" v-if="selectedItem">
+                    <div class="col-3 offset-1">
+                        <figure>
+                            <img class="figure-img img-thumbnail" :src="selectedItem.image">
+                            <figcaption class="figure-caption text-center">
+                                +{{currentItemLevel}}
+                                {{selectedItem.name}}
+                            </figcaption>
+                            <figcaption class="lev">+{{currentItemLevel}}</figcaption>
+                        </figure>
+                    </div>
+                    <div class="col-3">
+                        <figure v-if="enchantStoneLevel > 0">
+                            <img class="figure-img img-thumbnail"
+                                :src="'./image/item_stone_'+(parseInt((enchantStoneLevel-1) / 20))+'.png'">
+
+                            <figcaption class="figure-caption text-center">
+                                {{enchantStoneLevel}}레벨 강화석
+                            </figcaption>
+                        </figure>
+                    </div>
+                    <div class="col-1"></div>
+                    <div class="col-3">
+                        <figure v-if="resultItemLevel != null">
+                            <img class="figure-img img-thumbnail" :src="selectedItem.image"
+                                :style="'box-shadow: 0 0 10px 3px ' + (enchantResult ? 'blue' : 'red')">
+                            <figcaption class="figure-caption text-center">
+                                +{{resultItemLevel}}
+                                {{selectedItem.name}}
+                            </figcaption>
+                            <figcaption class="lev">+{{resultItemLevel}}</figcaption>
+                        </figure>
+                    </div>
+                    <div class="col-md-10 offset-md-1 text-right" v-if="enchantReady">
+                        <button class="btn btn-warning" @click="startEnchantProgress" v-if="currentItemLevel < 15"
+                            :disabled="resultItemLevel != null && enchantProgress < 100">강화</button>
+                        <button class="btn btn-danger" @click="startEnchantProgress2"
+                            v-if="resultItemLevel != null && currentItemLevel < 15">계속 강화</button>
+                    </div>
+                </div>
+
+                <div class="row mt-4" v-if="enchantProgress" v-if="selectedItem">
+                    <div class="col-md-10 offset-md-1">
+                        <div class="progress">
+                            <div class="progress-bar" role="progressbar" :style="{width: enchantProgress + '%'}"
+                                aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <h6 class="text-center mt-2 result" v-if="resultItemLevel != null"
+                            :class="{success:enchantResult}">
+                            {{enchantResultText}}
+                        </h6>
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-md-10 offset-md-1">
+                        <h5>강화 계산 공식</h5>
+                        <p>
+                            상상과 경험에 기반한 근거 없는 계산 공식입니다.<br>
+                            많은 의견 바랍니다.
+                        </p>
+                        <h6>기본 적용 확률</h6>
+                        <ul>
+                            <li>영웅 : 다루지 않음</li>
+                            <li>유일 : 20레벨 차이나는 강화석으로 강화할 경우 50%로 설정</li>
+                            <li>전승 : 15레벨 차이나는 강화석으로 강화할 경우 50%로 설정</li>
+                            <li>희귀 : 10레벨 차이나는 강화석으로 강화할 경우 50%로 설정</li>
+                            <li>일반 : 5레벨 차이나는 강화석으로 강화할 경우 50%로 설정</li>
+                        </ul>
+
+                        강화석 레벨 1당 2%씩 증가 혹은 감소하도록 설정<br>
+                        아이온의 강화 확률은 공개되어 있지 않기 때문에 실험을 기반으로 추측하여 적용시킬 계획입니다.<br><br>
+
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -305,144 +320,851 @@
                         active: false
                     },
                 ],
-                inputItemName:"",
-                selectedItem:null,
-                itemList:[
-                    {name:"몰락한 고대신의 양손검", level:50, grade:"유일", type:"무기", subType:"양손검", code:"100900235", trade:true},
-                    {name:"몰락한 고대신의 검", level:50, grade:"유일", type:"무기", subType:"장검", code:"100000318", trade:true},
-                    {name:"몰락한 고대신의 단도", level:50, grade:"유일", type:"무기", subType:"단검", code:"100200339", trade:true},
-                    {name:"몰락한 고대신의 마법서", level:50, grade:"유일", type:"무기", subType:"법서", code:"100600258", trade:true},
-                    {name:"몰락한 고대신의 보옥", level:50, grade:"유일", type:"무기", subType:"보옥", code:"100500242", trade:true},
-                    {name:"몰락한 고대신의 장궁", level:50, grade:"유일", type:"무기", subType:"활", code:"101700256", trade:true},
-                    {name:"몰락한 고대신의 전투망치", level:50, grade:"유일", type:"무기", subType:"전곤", code:"100100231", trade:true},
-                    {name:"몰락한 고대신의 지팡이", level:50, grade:"유일", type:"무기", subType:"지팡이", code:"101500583", trade:true},
-                    {name:"몰락한 고대신의 창", level:50, grade:"유일", type:"무기", subType:"창", code:"101300232", trade:true},
-                    {name:"아누하르트 정예병의 마법서", level:50, grade:"유일", type:"무기", subType:"법서", code:"100600635", trade:false},
-                    {name:"아누하르트 정예병의 보옥", level:50, grade:"유일", type:"무기", subType:"보옥", code:"100500601", trade:false},
-                    {name:"아누하르트 정예병의 비늘검", level:50, grade:"유일", type:"무기", subType:"장검", code:"100000765", trade:false},
-                    {name:"아누하르트 정예병의 비수", level:50, grade:"유일", type:"무기", subType:"단검", code:"100200701", trade:false},
-                    {name:"아누하르트 정예병의 양손검", level:50, grade:"유일", type:"무기", subType:"양손검", code:"100900590", trade:false},
-                    {name:"아누하르트 정예병의 역린검", level:50, grade:"유일", type:"무기", subType:"장검", code:"100000766", trade:false},
-                    {name:"아누하르트 정예병의 장궁", level:50, grade:"유일", type:"무기", subType:"활", code:"101700619", trade:false},
-                    {name:"아누하르트 정예병의 전투망치", level:50, grade:"유일", type:"무기", subType:"전곤", code:"100100580", trade:false},
-                    {name:"아누하르트 정예병의 지팡이", level:50, grade:"유일", type:"무기", subType:"지팡이", code:"101500604", trade:false},
-                    {name:"아누하르트 정예병의 창", level:50, grade:"유일", type:"무기", subType:"창", code:"101300563", trade:false},
-                    {name:"아누하르트 정예병의 창린검", level:50, grade:"유일", type:"무기", subType:"장검", code:"100000767", trade:false},
-                    {name:"아누하르트 정예병의 단도", level:50, grade:"유일", type:"무기", subType:"단검", code:"100200700", trade:false},
-                    
-                    {name:"몰락한 고대신의 판금 흉갑", level:50, grade:"유일", type:"방어구", subType:"상의", extraType:"판금", code:"110600509", trade:true},
-                    {name:"몰락한 고대신의 판금 각반", level:50, grade:"유일", type:"방어구", subType:"하의", extraType:"판금", code:"113600476", trade:true},
-                    {name:"몰락한 고대신의 판금 견갑", level:50, grade:"유일", type:"방어구", subType:"어깨", extraType:"판금", code:"112600461", trade:true},
-                    {name:"몰락한 고대신의 판금 장갑", level:50, grade:"유일", type:"방어구", subType:"장갑", extraType:"판금", code:"111600480", trade:true},
-                    {name:"몰락한 고대신의 판금 장화", level:50, grade:"유일", type:"방어구", subType:"신발", extraType:"판금", code:"114600466", trade:true},
-                    {name:"몰락한 고대신의 사슬 갑옷", level:50, grade:"유일", type:"방어구", subType:"상의", extraType:"사슬", code:"110500514", trade:true},
-                    {name:"몰락한 고대신의 사슬 다리갑옷", level:50, grade:"유일", type:"방어구", subType:"하의", extraType:"사슬", code:"113500492", trade:true},
-                    {name:"몰락한 고대신의 사슬 견갑", level:50, grade:"유일", type:"방어구", subType:"어깨", extraType:"사슬", code:"112500456", trade:true},
-                    {name:"몰락한 고대신의 사슬 장갑", level:50, grade:"유일", type:"방어구", subType:"장갑", extraType:"사슬", code:"111500493", trade:true},
-                    {name:"몰락한 고대신의 사슬 장화", level:50, grade:"유일", type:"방어구", subType:"신발", extraType:"사슬", code:"114500499", trade:true},
-                    {name:"몰락한 고대신의 가죽 조끼", level:50, grade:"유일", type:"방어구", subType:"상의", extraType:"가죽", code:"110300536", trade:true},
-                    {name:"몰락한 고대신의 가죽 다리보호대", level:50, grade:"유일", type:"방어구", subType:"하의", extraType:"가죽", code:"113300519", trade:true},
-                    {name:"몰락한 고대신의 가죽 어깨보호구", level:50, grade:"유일", type:"방어구", subType:"어깨", extraType:"가죽", code:"112300468", trade:true},
-                    {name:"몰락한 고대신의 가죽 장갑", level:50, grade:"유일", type:"방어구", subType:"장갑", extraType:"가죽", code:"111300506", trade:true},
-                    {name:"몰락한 고대신의 가죽 신발", level:50, grade:"유일", type:"방어구", subType:"신발", extraType:"가죽", code:"114300533", trade:true},
-                    {name:"몰락한 고대신의 로브 상의", level:50, grade:"유일", type:"방어구", subType:"상의", extraType:"로브", code:"110100575", trade:true},
-                    {name:"몰락한 고대신의 로브 하의", level:50, grade:"유일", type:"방어구", subType:"하의", extraType:"로브", code:"113100503", trade:true},
-                    {name:"몰락한 고대신의 로브 어깨보호구", level:50, grade:"유일", type:"방어구", subType:"어깨", extraType:"로브", code:"112100468", trade:true},
-                    {name:"몰락한 고대신의 로브 장갑", level:50, grade:"유일", type:"방어구", subType:"장갑", extraType:"로브", code:"111100504", trade:true},
-                    {name:"몰락한 고대신의 로브 신발", level:50, grade:"유일", type:"방어구", subType:"신발", extraType:"로브", code:"114100520", trade:true},
-                    
-                    {name:"아누하르트 수호성의 판금 흉갑", level:50, grade:"유일", type:"방어구", subType:"상의", extraType:"판금", code:"110500869", trade:false},
-                    {name:"아누하르트 수호성의 판금 각반", level:50, grade:"유일", type:"방어구", subType:"하의", extraType:"판금", code:"113600835", trade:false},
-                    {name:"아누하르트 수호성의 판금 견갑", level:50, grade:"유일", type:"방어구", subType:"어깨", extraType:"판금", code:"112600820", trade:false},
-                    {name:"아누하르트 수호성의 판금 장갑", level:50, grade:"유일", type:"방어구", subType:"장갑", extraType:"판금", code:"111600846", trade:false},
-                    {name:"아누하르트 수호성의 판금 장화", level:50, grade:"유일", type:"방어구", subType:"신발", extraType:"판금", code:"114600829", trade:false},
-                    
-                    {name:"아누하르트 검성의 판금 흉갑", level:50, grade:"유일", type:"방어구", subType:"상의", extraType:"판금", code:"110600869", trade:false},
-                    {name:"아누하르트 검성의 판금 각반", level:50, grade:"유일", type:"방어구", subType:"하의", extraType:"판금", code:"113600834", trade:false},
-                    {name:"아누하르트 검성의 판금 견갑", level:50, grade:"유일", type:"방어구", subType:"어깨", extraType:"판금", code:"112600819", trade:false},
-                    {name:"아누하르트 검성의 판금 장갑", level:50, grade:"유일", type:"방어구", subType:"장갑", extraType:"판금", code:"111600845", trade:false},
-                    {name:"아누하르트 검성의 판금 장화", level:50, grade:"유일", type:"방어구", subType:"신발", extraType:"판금", code:"114600828", trade:false},
-                    
-                    {name:"아누하르트 호법성의 사슬 갑옷", level:50, grade:"유일", type:"방어구", subType:"상의", extraType:"사슬", code:"110500886", trade:false},
-                    {name:"아누하르트 호법성의 사슬 다리갑옷", level:50, grade:"유일", type:"방어구", subType:"하의", extraType:"사슬", code:"113500860", trade:false},
-                    {name:"아누하르트 호법성의 사슬 견갑", level:50, grade:"유일", type:"방어구", subType:"어깨", extraType:"사슬", code:"112500809", trade:false},
-                    {name:"아누하르트 호법성의 사슬 장갑", level:50, grade:"유일", type:"방어구", subType:"장갑", extraType:"사슬", code:"111500858", trade:false},
-                    {name:"아누하르트 호법성의 사슬 장화", level:50, grade:"유일", type:"방어구", subType:"신발", extraType:"사슬", code:"114500870", trade:false},
+                inputItemName: "",
+                selectedItem: null,
+                itemList: [{
+                        name: "몰락한 고대신의 양손검",
+                        level: 50,
+                        grade: "유일",
+                        type: "무기",
+                        subType: "양손검",
+                        code: "100900235",
+                        trade: true
+                    },
+                    {
+                        name: "몰락한 고대신의 검",
+                        level: 50,
+                        grade: "유일",
+                        type: "무기",
+                        subType: "장검",
+                        code: "100000318",
+                        trade: true
+                    },
+                    {
+                        name: "몰락한 고대신의 단도",
+                        level: 50,
+                        grade: "유일",
+                        type: "무기",
+                        subType: "단검",
+                        code: "100200339",
+                        trade: true
+                    },
+                    {
+                        name: "몰락한 고대신의 마법서",
+                        level: 50,
+                        grade: "유일",
+                        type: "무기",
+                        subType: "법서",
+                        code: "100600258",
+                        trade: true
+                    },
+                    {
+                        name: "몰락한 고대신의 보옥",
+                        level: 50,
+                        grade: "유일",
+                        type: "무기",
+                        subType: "보옥",
+                        code: "100500242",
+                        trade: true
+                    },
+                    {
+                        name: "몰락한 고대신의 장궁",
+                        level: 50,
+                        grade: "유일",
+                        type: "무기",
+                        subType: "활",
+                        code: "101700256",
+                        trade: true
+                    },
+                    {
+                        name: "몰락한 고대신의 전투망치",
+                        level: 50,
+                        grade: "유일",
+                        type: "무기",
+                        subType: "전곤",
+                        code: "100100231",
+                        trade: true
+                    },
+                    {
+                        name: "몰락한 고대신의 지팡이",
+                        level: 50,
+                        grade: "유일",
+                        type: "무기",
+                        subType: "지팡이",
+                        code: "101500583",
+                        trade: true
+                    },
+                    {
+                        name: "몰락한 고대신의 창",
+                        level: 50,
+                        grade: "유일",
+                        type: "무기",
+                        subType: "창",
+                        code: "101300232",
+                        trade: true
+                    },
+                    {
+                        name: "아누하르트 정예병의 마법서",
+                        level: 50,
+                        grade: "유일",
+                        type: "무기",
+                        subType: "법서",
+                        code: "100600635",
+                        trade: false
+                    },
+                    {
+                        name: "아누하르트 정예병의 보옥",
+                        level: 50,
+                        grade: "유일",
+                        type: "무기",
+                        subType: "보옥",
+                        code: "100500601",
+                        trade: false
+                    },
+                    {
+                        name: "아누하르트 정예병의 비늘검",
+                        level: 50,
+                        grade: "유일",
+                        type: "무기",
+                        subType: "장검",
+                        code: "100000765",
+                        trade: false
+                    },
+                    {
+                        name: "아누하르트 정예병의 비수",
+                        level: 50,
+                        grade: "유일",
+                        type: "무기",
+                        subType: "단검",
+                        code: "100200701",
+                        trade: false
+                    },
+                    {
+                        name: "아누하르트 정예병의 양손검",
+                        level: 50,
+                        grade: "유일",
+                        type: "무기",
+                        subType: "양손검",
+                        code: "100900590",
+                        trade: false
+                    },
+                    {
+                        name: "아누하르트 정예병의 역린검",
+                        level: 50,
+                        grade: "유일",
+                        type: "무기",
+                        subType: "장검",
+                        code: "100000766",
+                        trade: false
+                    },
+                    {
+                        name: "아누하르트 정예병의 장궁",
+                        level: 50,
+                        grade: "유일",
+                        type: "무기",
+                        subType: "활",
+                        code: "101700619",
+                        trade: false
+                    },
+                    {
+                        name: "아누하르트 정예병의 전투망치",
+                        level: 50,
+                        grade: "유일",
+                        type: "무기",
+                        subType: "전곤",
+                        code: "100100580",
+                        trade: false
+                    },
+                    {
+                        name: "아누하르트 정예병의 지팡이",
+                        level: 50,
+                        grade: "유일",
+                        type: "무기",
+                        subType: "지팡이",
+                        code: "101500604",
+                        trade: false
+                    },
+                    {
+                        name: "아누하르트 정예병의 창",
+                        level: 50,
+                        grade: "유일",
+                        type: "무기",
+                        subType: "창",
+                        code: "101300563",
+                        trade: false
+                    },
+                    {
+                        name: "아누하르트 정예병의 창린검",
+                        level: 50,
+                        grade: "유일",
+                        type: "무기",
+                        subType: "장검",
+                        code: "100000767",
+                        trade: false
+                    },
+                    {
+                        name: "아누하르트 정예병의 단도",
+                        level: 50,
+                        grade: "유일",
+                        type: "무기",
+                        subType: "단검",
+                        code: "100200700",
+                        trade: false
+                    },
 
-                    {name:"아누하르트 치유성의 사슬 갑옷", level:50, grade:"유일", type:"방어구", subType:"상의", extraType:"사슬", code:"110500885", trade:false},
-                    {name:"아누하르트 치유성의 사슬 다리갑옷", level:50, grade:"유일", type:"방어구", subType:"하의", extraType:"사슬", code:"113500860", trade:false},
-                    {name:"아누하르트 치유성의 사슬 견갑", level:50, grade:"유일", type:"방어구", subType:"어깨", extraType:"사슬", code:"112500809", trade:false},
-                    {name:"아누하르트 치유성의 사슬 장갑", level:50, grade:"유일", type:"방어구", subType:"장갑", extraType:"사슬", code:"111500858", trade:false},
-                    {name:"아누하르트 치유성의 사슬 장화", level:50, grade:"유일", type:"방어구", subType:"신발", extraType:"사슬", code:"114500870", trade:false},
+                    {
+                        name: "몰락한 고대신의 판금 흉갑",
+                        level: 50,
+                        grade: "유일",
+                        type: "방어구",
+                        subType: "상의",
+                        extraType: "판금",
+                        code: "110600509",
+                        trade: true
+                    },
+                    {
+                        name: "몰락한 고대신의 판금 각반",
+                        level: 50,
+                        grade: "유일",
+                        type: "방어구",
+                        subType: "하의",
+                        extraType: "판금",
+                        code: "113600476",
+                        trade: true
+                    },
+                    {
+                        name: "몰락한 고대신의 판금 견갑",
+                        level: 50,
+                        grade: "유일",
+                        type: "방어구",
+                        subType: "어깨",
+                        extraType: "판금",
+                        code: "112600461",
+                        trade: true
+                    },
+                    {
+                        name: "몰락한 고대신의 판금 장갑",
+                        level: 50,
+                        grade: "유일",
+                        type: "방어구",
+                        subType: "장갑",
+                        extraType: "판금",
+                        code: "111600480",
+                        trade: true
+                    },
+                    {
+                        name: "몰락한 고대신의 판금 장화",
+                        level: 50,
+                        grade: "유일",
+                        type: "방어구",
+                        subType: "신발",
+                        extraType: "판금",
+                        code: "114600466",
+                        trade: true
+                    },
+                    {
+                        name: "몰락한 고대신의 사슬 갑옷",
+                        level: 50,
+                        grade: "유일",
+                        type: "방어구",
+                        subType: "상의",
+                        extraType: "사슬",
+                        code: "110500514",
+                        trade: true
+                    },
+                    {
+                        name: "몰락한 고대신의 사슬 다리갑옷",
+                        level: 50,
+                        grade: "유일",
+                        type: "방어구",
+                        subType: "하의",
+                        extraType: "사슬",
+                        code: "113500492",
+                        trade: true
+                    },
+                    {
+                        name: "몰락한 고대신의 사슬 견갑",
+                        level: 50,
+                        grade: "유일",
+                        type: "방어구",
+                        subType: "어깨",
+                        extraType: "사슬",
+                        code: "112500456",
+                        trade: true
+                    },
+                    {
+                        name: "몰락한 고대신의 사슬 장갑",
+                        level: 50,
+                        grade: "유일",
+                        type: "방어구",
+                        subType: "장갑",
+                        extraType: "사슬",
+                        code: "111500493",
+                        trade: true
+                    },
+                    {
+                        name: "몰락한 고대신의 사슬 장화",
+                        level: 50,
+                        grade: "유일",
+                        type: "방어구",
+                        subType: "신발",
+                        extraType: "사슬",
+                        code: "114500499",
+                        trade: true
+                    },
+                    {
+                        name: "몰락한 고대신의 가죽 조끼",
+                        level: 50,
+                        grade: "유일",
+                        type: "방어구",
+                        subType: "상의",
+                        extraType: "가죽",
+                        code: "110300536",
+                        trade: true
+                    },
+                    {
+                        name: "몰락한 고대신의 가죽 다리보호대",
+                        level: 50,
+                        grade: "유일",
+                        type: "방어구",
+                        subType: "하의",
+                        extraType: "가죽",
+                        code: "113300519",
+                        trade: true
+                    },
+                    {
+                        name: "몰락한 고대신의 가죽 어깨보호구",
+                        level: 50,
+                        grade: "유일",
+                        type: "방어구",
+                        subType: "어깨",
+                        extraType: "가죽",
+                        code: "112300468",
+                        trade: true
+                    },
+                    {
+                        name: "몰락한 고대신의 가죽 장갑",
+                        level: 50,
+                        grade: "유일",
+                        type: "방어구",
+                        subType: "장갑",
+                        extraType: "가죽",
+                        code: "111300506",
+                        trade: true
+                    },
+                    {
+                        name: "몰락한 고대신의 가죽 신발",
+                        level: 50,
+                        grade: "유일",
+                        type: "방어구",
+                        subType: "신발",
+                        extraType: "가죽",
+                        code: "114300533",
+                        trade: true
+                    },
+                    {
+                        name: "몰락한 고대신의 로브 상의",
+                        level: 50,
+                        grade: "유일",
+                        type: "방어구",
+                        subType: "상의",
+                        extraType: "로브",
+                        code: "110100575",
+                        trade: true
+                    },
+                    {
+                        name: "몰락한 고대신의 로브 하의",
+                        level: 50,
+                        grade: "유일",
+                        type: "방어구",
+                        subType: "하의",
+                        extraType: "로브",
+                        code: "113100503",
+                        trade: true
+                    },
+                    {
+                        name: "몰락한 고대신의 로브 어깨보호구",
+                        level: 50,
+                        grade: "유일",
+                        type: "방어구",
+                        subType: "어깨",
+                        extraType: "로브",
+                        code: "112100468",
+                        trade: true
+                    },
+                    {
+                        name: "몰락한 고대신의 로브 장갑",
+                        level: 50,
+                        grade: "유일",
+                        type: "방어구",
+                        subType: "장갑",
+                        extraType: "로브",
+                        code: "111100504",
+                        trade: true
+                    },
+                    {
+                        name: "몰락한 고대신의 로브 신발",
+                        level: 50,
+                        grade: "유일",
+                        type: "방어구",
+                        subType: "신발",
+                        extraType: "로브",
+                        code: "114100520",
+                        trade: true
+                    },
 
-                    {name:"아누하르트 살성의 가죽 조끼", level:50, grade:"유일", type:"방어구", subType:"상의", extraType:"가죽", code:"110300917", trade:false},
-                    {name:"아누하르트 살성의 가죽 다리보호대", level:50, grade:"유일", type:"방어구", subType:"하의", extraType:"가죽", code:"113300893", trade:false},
-                    {name:"아누하르트 살성의 가죽 어깨보호구", level:50, grade:"유일", type:"방어구", subType:"어깨", extraType:"가죽", code:"112300817", trade:false},
-                    {name:"아누하르트 살성의 가죽 장갑", level:50, grade:"유일", type:"방어구", subType:"장갑", extraType:"가죽", code:"111300867", trade:false},
-                    {name:"아누하르트 살성의 가죽 신발", level:50, grade:"유일", type:"방어구", subType:"신발", extraType:"가죽", code:"114300926", trade:false},
+                    {
+                        name: "아누하르트 수호성의 판금 흉갑",
+                        level: 50,
+                        grade: "유일",
+                        type: "방어구",
+                        subType: "상의",
+                        extraType: "판금",
+                        code: "110500869",
+                        trade: false
+                    },
+                    {
+                        name: "아누하르트 수호성의 판금 각반",
+                        level: 50,
+                        grade: "유일",
+                        type: "방어구",
+                        subType: "하의",
+                        extraType: "판금",
+                        code: "113600835",
+                        trade: false
+                    },
+                    {
+                        name: "아누하르트 수호성의 판금 견갑",
+                        level: 50,
+                        grade: "유일",
+                        type: "방어구",
+                        subType: "어깨",
+                        extraType: "판금",
+                        code: "112600820",
+                        trade: false
+                    },
+                    {
+                        name: "아누하르트 수호성의 판금 장갑",
+                        level: 50,
+                        grade: "유일",
+                        type: "방어구",
+                        subType: "장갑",
+                        extraType: "판금",
+                        code: "111600846",
+                        trade: false
+                    },
+                    {
+                        name: "아누하르트 수호성의 판금 장화",
+                        level: 50,
+                        grade: "유일",
+                        type: "방어구",
+                        subType: "신발",
+                        extraType: "판금",
+                        code: "114600829",
+                        trade: false
+                    },
 
-                    {name:"아누하르트 궁성의 가죽 조끼", level:50, grade:"유일", type:"방어구", subType:"상의", extraType:"가죽", code:"110300918", trade:false},
-                    {name:"아누하르트 궁성의 가죽 다리보호대", level:50, grade:"유일", type:"방어구", subType:"하의", extraType:"가죽", code:"113300894", trade:false},
-                    {name:"아누하르트 궁성의 가죽 어깨보호구", level:50, grade:"유일", type:"방어구", subType:"어깨", extraType:"가죽", code:"112300818", trade:false},
-                    {name:"아누하르트 궁성의 가죽 장갑", level:50, grade:"유일", type:"방어구", subType:"장갑", extraType:"가죽", code:"111300868", trade:false},
-                    {name:"아누하르트 궁성의 가죽 신발", level:50, grade:"유일", type:"방어구", subType:"신발", extraType:"가죽", code:"114300927", trade:false},
+                    {
+                        name: "아누하르트 검성의 판금 흉갑",
+                        level: 50,
+                        grade: "유일",
+                        type: "방어구",
+                        subType: "상의",
+                        extraType: "판금",
+                        code: "110600869",
+                        trade: false
+                    },
+                    {
+                        name: "아누하르트 검성의 판금 각반",
+                        level: 50,
+                        grade: "유일",
+                        type: "방어구",
+                        subType: "하의",
+                        extraType: "판금",
+                        code: "113600834",
+                        trade: false
+                    },
+                    {
+                        name: "아누하르트 검성의 판금 견갑",
+                        level: 50,
+                        grade: "유일",
+                        type: "방어구",
+                        subType: "어깨",
+                        extraType: "판금",
+                        code: "112600819",
+                        trade: false
+                    },
+                    {
+                        name: "아누하르트 검성의 판금 장갑",
+                        level: 50,
+                        grade: "유일",
+                        type: "방어구",
+                        subType: "장갑",
+                        extraType: "판금",
+                        code: "111600845",
+                        trade: false
+                    },
+                    {
+                        name: "아누하르트 검성의 판금 장화",
+                        level: 50,
+                        grade: "유일",
+                        type: "방어구",
+                        subType: "신발",
+                        extraType: "판금",
+                        code: "114600828",
+                        trade: false
+                    },
 
-                    {name:"아누하르트 마도성의 로브 상의", level:50, grade:"유일", type:"방어구", subType:"상의", extraType:"로브", code:"110100972", trade:false},
-                    {name:"아누하르트 마도성의 로브 하의", level:50, grade:"유일", type:"방어구", subType:"하의", extraType:"로브", code:"113100876", trade:false},
-                    {name:"아누하르트 마도성의 로브 어깨보호구", level:50, grade:"유일", type:"방어구", subType:"어깨", extraType:"로브", code:"112100823", trade:false},
-                    {name:"아누하르트 마도성의 로브 장갑", level:50, grade:"유일", type:"방어구", subType:"장갑", extraType:"로브", code:"111100866", trade:false},
-                    {name:"아누하르트 마도성의 로브 신발", level:50, grade:"유일", type:"방어구", subType:"신발", extraType:"로브", code:"114100901", trade:false},
+                    {
+                        name: "아누하르트 호법성의 사슬 갑옷",
+                        level: 50,
+                        grade: "유일",
+                        type: "방어구",
+                        subType: "상의",
+                        extraType: "사슬",
+                        code: "110500886",
+                        trade: false
+                    },
+                    {
+                        name: "아누하르트 호법성의 사슬 다리갑옷",
+                        level: 50,
+                        grade: "유일",
+                        type: "방어구",
+                        subType: "하의",
+                        extraType: "사슬",
+                        code: "113500860",
+                        trade: false
+                    },
+                    {
+                        name: "아누하르트 호법성의 사슬 견갑",
+                        level: 50,
+                        grade: "유일",
+                        type: "방어구",
+                        subType: "어깨",
+                        extraType: "사슬",
+                        code: "112500809",
+                        trade: false
+                    },
+                    {
+                        name: "아누하르트 호법성의 사슬 장갑",
+                        level: 50,
+                        grade: "유일",
+                        type: "방어구",
+                        subType: "장갑",
+                        extraType: "사슬",
+                        code: "111500858",
+                        trade: false
+                    },
+                    {
+                        name: "아누하르트 호법성의 사슬 장화",
+                        level: 50,
+                        grade: "유일",
+                        type: "방어구",
+                        subType: "신발",
+                        extraType: "사슬",
+                        code: "114500870",
+                        trade: false
+                    },
 
-                    {name:"아누하르트 정령성의 로브 상의", level:50, grade:"유일", type:"방어구", subType:"상의", extraType:"로브", code:"110100973", trade:false},
-                    {name:"아누하르트 정령성의 로브 하의", level:50, grade:"유일", type:"방어구", subType:"하의", extraType:"로브", code:"113100877", trade:false},
-                    {name:"아누하르트 정령성의 로브 어깨보호구", level:50, grade:"유일", type:"방어구", subType:"어깨", extraType:"로브", code:"112100824", trade:false},
-                    {name:"아누하르트 정령성의 로브 장갑", level:50, grade:"유일", type:"방어구", subType:"장갑", extraType:"로브", code:"111100867", trade:false},
-                    {name:"아누하르트 정령성의 로브 신발", level:50, grade:"유일", type:"방어구", subType:"신발", extraType:"로브", code:"114100902", trade:false},
+                    {
+                        name: "아누하르트 치유성의 사슬 갑옷",
+                        level: 50,
+                        grade: "유일",
+                        type: "방어구",
+                        subType: "상의",
+                        extraType: "사슬",
+                        code: "110500885",
+                        trade: false
+                    },
+                    {
+                        name: "아누하르트 치유성의 사슬 다리갑옷",
+                        level: 50,
+                        grade: "유일",
+                        type: "방어구",
+                        subType: "하의",
+                        extraType: "사슬",
+                        code: "113500860",
+                        trade: false
+                    },
+                    {
+                        name: "아누하르트 치유성의 사슬 견갑",
+                        level: 50,
+                        grade: "유일",
+                        type: "방어구",
+                        subType: "어깨",
+                        extraType: "사슬",
+                        code: "112500809",
+                        trade: false
+                    },
+                    {
+                        name: "아누하르트 치유성의 사슬 장갑",
+                        level: 50,
+                        grade: "유일",
+                        type: "방어구",
+                        subType: "장갑",
+                        extraType: "사슬",
+                        code: "111500858",
+                        trade: false
+                    },
+                    {
+                        name: "아누하르트 치유성의 사슬 장화",
+                        level: 50,
+                        grade: "유일",
+                        type: "방어구",
+                        subType: "신발",
+                        extraType: "사슬",
+                        code: "114500870",
+                        trade: false
+                    },
+
+                    {
+                        name: "아누하르트 살성의 가죽 조끼",
+                        level: 50,
+                        grade: "유일",
+                        type: "방어구",
+                        subType: "상의",
+                        extraType: "가죽",
+                        code: "110300917",
+                        trade: false
+                    },
+                    {
+                        name: "아누하르트 살성의 가죽 다리보호대",
+                        level: 50,
+                        grade: "유일",
+                        type: "방어구",
+                        subType: "하의",
+                        extraType: "가죽",
+                        code: "113300893",
+                        trade: false
+                    },
+                    {
+                        name: "아누하르트 살성의 가죽 어깨보호구",
+                        level: 50,
+                        grade: "유일",
+                        type: "방어구",
+                        subType: "어깨",
+                        extraType: "가죽",
+                        code: "112300817",
+                        trade: false
+                    },
+                    {
+                        name: "아누하르트 살성의 가죽 장갑",
+                        level: 50,
+                        grade: "유일",
+                        type: "방어구",
+                        subType: "장갑",
+                        extraType: "가죽",
+                        code: "111300867",
+                        trade: false
+                    },
+                    {
+                        name: "아누하르트 살성의 가죽 신발",
+                        level: 50,
+                        grade: "유일",
+                        type: "방어구",
+                        subType: "신발",
+                        extraType: "가죽",
+                        code: "114300926",
+                        trade: false
+                    },
+
+                    {
+                        name: "아누하르트 궁성의 가죽 조끼",
+                        level: 50,
+                        grade: "유일",
+                        type: "방어구",
+                        subType: "상의",
+                        extraType: "가죽",
+                        code: "110300918",
+                        trade: false
+                    },
+                    {
+                        name: "아누하르트 궁성의 가죽 다리보호대",
+                        level: 50,
+                        grade: "유일",
+                        type: "방어구",
+                        subType: "하의",
+                        extraType: "가죽",
+                        code: "113300894",
+                        trade: false
+                    },
+                    {
+                        name: "아누하르트 궁성의 가죽 어깨보호구",
+                        level: 50,
+                        grade: "유일",
+                        type: "방어구",
+                        subType: "어깨",
+                        extraType: "가죽",
+                        code: "112300818",
+                        trade: false
+                    },
+                    {
+                        name: "아누하르트 궁성의 가죽 장갑",
+                        level: 50,
+                        grade: "유일",
+                        type: "방어구",
+                        subType: "장갑",
+                        extraType: "가죽",
+                        code: "111300868",
+                        trade: false
+                    },
+                    {
+                        name: "아누하르트 궁성의 가죽 신발",
+                        level: 50,
+                        grade: "유일",
+                        type: "방어구",
+                        subType: "신발",
+                        extraType: "가죽",
+                        code: "114300927",
+                        trade: false
+                    },
+
+                    {
+                        name: "아누하르트 마도성의 로브 상의",
+                        level: 50,
+                        grade: "유일",
+                        type: "방어구",
+                        subType: "상의",
+                        extraType: "로브",
+                        code: "110100972",
+                        trade: false
+                    },
+                    {
+                        name: "아누하르트 마도성의 로브 하의",
+                        level: 50,
+                        grade: "유일",
+                        type: "방어구",
+                        subType: "하의",
+                        extraType: "로브",
+                        code: "113100876",
+                        trade: false
+                    },
+                    {
+                        name: "아누하르트 마도성의 로브 어깨보호구",
+                        level: 50,
+                        grade: "유일",
+                        type: "방어구",
+                        subType: "어깨",
+                        extraType: "로브",
+                        code: "112100823",
+                        trade: false
+                    },
+                    {
+                        name: "아누하르트 마도성의 로브 장갑",
+                        level: 50,
+                        grade: "유일",
+                        type: "방어구",
+                        subType: "장갑",
+                        extraType: "로브",
+                        code: "111100866",
+                        trade: false
+                    },
+                    {
+                        name: "아누하르트 마도성의 로브 신발",
+                        level: 50,
+                        grade: "유일",
+                        type: "방어구",
+                        subType: "신발",
+                        extraType: "로브",
+                        code: "114100901",
+                        trade: false
+                    },
+
+                    {
+                        name: "아누하르트 정령성의 로브 상의",
+                        level: 50,
+                        grade: "유일",
+                        type: "방어구",
+                        subType: "상의",
+                        extraType: "로브",
+                        code: "110100973",
+                        trade: false
+                    },
+                    {
+                        name: "아누하르트 정령성의 로브 하의",
+                        level: 50,
+                        grade: "유일",
+                        type: "방어구",
+                        subType: "하의",
+                        extraType: "로브",
+                        code: "113100877",
+                        trade: false
+                    },
+                    {
+                        name: "아누하르트 정령성의 로브 어깨보호구",
+                        level: 50,
+                        grade: "유일",
+                        type: "방어구",
+                        subType: "어깨",
+                        extraType: "로브",
+                        code: "112100824",
+                        trade: false
+                    },
+                    {
+                        name: "아누하르트 정령성의 로브 장갑",
+                        level: 50,
+                        grade: "유일",
+                        type: "방어구",
+                        subType: "장갑",
+                        extraType: "로브",
+                        code: "111100867",
+                        trade: false
+                    },
+                    {
+                        name: "아누하르트 정령성의 로브 신발",
+                        level: 50,
+                        grade: "유일",
+                        type: "방어구",
+                        subType: "신발",
+                        extraType: "로브",
+                        code: "114100902",
+                        trade: false
+                    },
 
                 ],
-                progress:0,
-                resultStone:null,
+                progress: 0,
+                resultStone: null,
 
-                enchantStoneLevel:0,
-                currentItemLevel:0,
+                enchantStoneLevel: 0,
+                currentItemLevel: 0,
 
-                enchantProgress:0,
-                resultItemLevel:null,
-                enchantResult:false,
+                enchantProgress: 0,
+                resultItemLevel: null,
+                enchantResult: false,
             },
-            computed:{
-                enchantReady:function(){
-                    return this.selectedItem 
-                            && this.enchantStoneLevel > 0 
-                            && this.currentItemLevel >= 0 && this.currentItemLevel <= 15;
+            computed: {
+                enchantReady: function () {
+                    return this.selectedItem &&
+                        this.enchantStoneLevel > 0 &&
+                        this.currentItemLevel >= 0 && this.currentItemLevel <= 15;
                 },
-                enchantResultText:function(){
-                    if(this.enchantProgress < 100)
+                enchantResultText: function () {
+                    if (this.enchantProgress < 100)
                         return "강화 중";
-                    else if(this.enchantResult)
+                    else if (this.enchantResult)
                         return "강화 성공";
-                    else 
+                    else
                         return "강화 실패";
                 },
             },
-            watch:{
+            watch: {
 
             },
             methods: {
-                selectMenu: function(name) {
+                selectMenu: function (name) {
                     this.menu.forEach(m => {
                         m.active = m.name === name;
                     });
                 },
                 /* unicode 입력 감지 기능 */
-                typing:function(e){
+                typing: function (e) {
                     this.inputItemName = e.target.value;
                 },
-                choiceItem:function(){
+                choiceItem: function () {
                     this.selectItem = null;
 
-                    for(var i=0; i < this.itemList.length; i++){
-                        if(this.itemList[i].code === this.inputItemName){
+                    for (var i = 0; i < this.itemList.length; i++) {
+                        if (this.itemList[i].code === this.inputItemName) {
                             this.selectedItem = Object.assign({}, this.itemList[i]);
                             break;
                         }
@@ -451,74 +1173,103 @@
                     this.selectedItem.image = this.choiceItemImage();
                     this.enchantStoneLevel = this.selectedItem.level;
                 },
-                choiceItemImage:function(){
-                    if(!this.selectedItem) return "";
-                    switch(this.selectedItem.subType){
-                        case "장검": return "./image/item-weapon-sword.png";
-                        case "단검": return "./image/item-weapon-dagger.png";
-                        case "양손검": return "./image/item-weapon-twohand.png";
-                        case "창": return "./image/item-weapon-lance.png";
-                        case "활": return "./image/item-weapon-bow.png";
-                        case "지팡이": return "./image/item-weapon-staff.png";
-                        case "법서": return "./image/item-weapon-spellbook.png";
-                        case "보옥": return "./image/item-weapon-orb.png";
-                        case "전곤": return "./image/item-weapon-mace.png";
-                        case "방패": return "./image/item-armor-shield.png";
-                        case "상의": 
-                            switch(this.selectedItem.extraType){
-                                case "판금": return "./image/item-armor-plate-01.png";
-                                case "사슬": return "./image/item-armor-chain-01.png";
-                                case "가죽": return "./image/item-armor-ladder-01.png";
-                                case "로브": return "./image/item-armor-robe-01.png";
+                choiceItemImage: function () {
+                    if (!this.selectedItem) return "";
+                    switch (this.selectedItem.subType) {
+                        case "장검":
+                            return "./image/item-weapon-sword.png";
+                        case "단검":
+                            return "./image/item-weapon-dagger.png";
+                        case "양손검":
+                            return "./image/item-weapon-twohand.png";
+                        case "창":
+                            return "./image/item-weapon-lance.png";
+                        case "활":
+                            return "./image/item-weapon-bow.png";
+                        case "지팡이":
+                            return "./image/item-weapon-staff.png";
+                        case "법서":
+                            return "./image/item-weapon-spellbook.png";
+                        case "보옥":
+                            return "./image/item-weapon-orb.png";
+                        case "전곤":
+                            return "./image/item-weapon-mace.png";
+                        case "방패":
+                            return "./image/item-armor-shield.png";
+                        case "상의":
+                            switch (this.selectedItem.extraType) {
+                                case "판금":
+                                    return "./image/item-armor-plate-01.png";
+                                case "사슬":
+                                    return "./image/item-armor-chain-01.png";
+                                case "가죽":
+                                    return "./image/item-armor-ladder-01.png";
+                                case "로브":
+                                    return "./image/item-armor-robe-01.png";
                             }
-                        case "하의": 
-                            switch(this.selectedItem.extraType){
-                                case "판금": return "./image/item-armor-plate-02.png";
-                                case "사슬": return "./image/item-armor-chain-02.png";
-                                case "가죽": return "./image/item-armor-ladder-02.png";
-                                case "로브": return "./image/item-armor-robe-02.png";
-                            }
-                        case "어깨": 
-                            switch(this.selectedItem.extraType){
-                                case "판금": return "./image/item-armor-plate-03.png";
-                                case "사슬": return "./image/item-armor-chain-03.png";
-                                case "가죽": return "./image/item-armor-ladder-03.png";
-                                case "로브": return "./image/item-armor-robe-03.png";
-                            }
-                        case "장갑": 
-                            switch(this.selectedItem.extraType){
-                                case "판금": return "./image/item-armor-plate-04.png";
-                                case "사슬": return "./image/item-armor-chain-04.png";
-                                case "가죽": return "./image/item-armor-ladder-04.png";
-                                case "로브": return "./image/item-armor-robe-04.png";
-                            }
-                        case "신발": 
-                            switch(this.selectedItem.extraType){
-                                case "판금": return "./image/item-armor-plate-05.png";
-                                case "사슬": return "./image/item-armor-chain-05.png";
-                                case "가죽": return "./image/item-armor-ladder-05.png";
-                                case "로브": return "./image/item-armor-robe-05.png";
-                            }
+                            case "하의":
+                                switch (this.selectedItem.extraType) {
+                                    case "판금":
+                                        return "./image/item-armor-plate-02.png";
+                                    case "사슬":
+                                        return "./image/item-armor-chain-02.png";
+                                    case "가죽":
+                                        return "./image/item-armor-ladder-02.png";
+                                    case "로브":
+                                        return "./image/item-armor-robe-02.png";
+                                }
+                                case "어깨":
+                                    switch (this.selectedItem.extraType) {
+                                        case "판금":
+                                            return "./image/item-armor-plate-03.png";
+                                        case "사슬":
+                                            return "./image/item-armor-chain-03.png";
+                                        case "가죽":
+                                            return "./image/item-armor-ladder-03.png";
+                                        case "로브":
+                                            return "./image/item-armor-robe-03.png";
+                                    }
+                                    case "장갑":
+                                        switch (this.selectedItem.extraType) {
+                                            case "판금":
+                                                return "./image/item-armor-plate-04.png";
+                                            case "사슬":
+                                                return "./image/item-armor-chain-04.png";
+                                            case "가죽":
+                                                return "./image/item-armor-ladder-04.png";
+                                            case "로브":
+                                                return "./image/item-armor-robe-04.png";
+                                        }
+                                        case "신발":
+                                            switch (this.selectedItem.extraType) {
+                                                case "판금":
+                                                    return "./image/item-armor-plate-05.png";
+                                                case "사슬":
+                                                    return "./image/item-armor-chain-05.png";
+                                                case "가죽":
+                                                    return "./image/item-armor-ladder-05.png";
+                                                case "로브":
+                                                    return "./image/item-armor-robe-05.png";
+                                            }
                     }
                 },
-                startProgress:function(second){
+                startProgress: function (second) {
                     this.progress = 0;
                     this.resultStone = null;
-                    
-                    var proc = ()=>{
+
+                    var proc = () => {
                         this.progress++;
-                        if(this.progress < 100){
-                            setTimeout(proc, second/100);
-                        }
-                        else{
+                        if (this.progress < 100) {
+                            setTimeout(proc, second / 100);
+                        } else {
                             setTimeout(this.afterProgress, 500);
                         }
                     };
-                    
+
                     setTimeout(proc, 100);
                 },
-                afterProgress:function(){
-                    if(!this.selectedItem) return;
+                afterProgress: function () {
+                    if (!this.selectedItem) return;
 
                     this.resultStone = {
                         level: this.generateStoneLevelVersion1(this.selectedItem),
@@ -527,198 +1278,233 @@
                 },
 
                 /* 추출 레벨 결정 */
-                generateStoneLevelVersion1:function(item){
+                generateStoneLevelVersion1: function (item) {
                     var levelBoundary = this.getStoneLevelBoundary(item);
                     //var level = this.getRandom(item.level, item.level + levelBoundary);
                     var level = this.getTruncGaussianRandom(item.level, item.level + levelBoundary);
                     return level;
                 },
                 /* 추출 개수 결정 */
-                generateStoneQuantityVersion1:function(item){
+                generateStoneQuantityVersion1: function (item) {
                     var countBoundary = this.getStoneCountBoundary(item);
                     //var count = this.getRandom(1, countBoundary);
                     var count = this.getTruncGaussianRandom(1, countBoundary);
                     return count;
                 },
 
-                getStoneLevelBoundary:function(item){
-                    switch(item.grade){
-                        case "유일": return 40;
-                        case "전승": return 20;
-                        case "희귀": return 10;
-                        case "일반": return 5;
+                getStoneLevelBoundary: function (item) {
+                    switch (item.grade) {
+                        case "유일":
+                            return 40;
+                        case "전승":
+                            return 20;
+                        case "희귀":
+                            return 10;
+                        case "일반":
+                            return 5;
                     }
                     return null;
                 },
-                getStoneCountBoundary:function(item){
-                    if(item.type === "무기"){
-                        if(item.trade){
-                            switch(item.grade){
-                                case "유일": return 8;
-                                case "전승": return 6;
-                                case "희귀": return 4;
-                                case "일반": return 2;
+                getStoneCountBoundary: function (item) {
+                    if (item.type === "무기") {
+                        if (item.trade) {
+                            switch (item.grade) {
+                                case "유일":
+                                    return 8;
+                                case "전승":
+                                    return 6;
+                                case "희귀":
+                                    return 4;
+                                case "일반":
+                                    return 2;
+                            }
+                        } else {
+                            switch (item.grade) {
+                                case "유일":
+                                    return 3;
+                                case "전승":
+                                    return 2;
+                                case "희귀":
+                                    return 1;
+                                case "일반":
+                                    return 1;
                             }
                         }
-                        else{
-                            switch(item.grade){
-                                case "유일": return 3;
-                                case "전승": return 2;
-                                case "희귀": return 1;
-                                case "일반": return 1;
-                            }
-                        }
-                    }
-                    else if(item.type === "방어구"){
-                        if(item.trade){
-                            if(item.subType === "방패"){
-                                switch(item.grade){
-                                    case "유일": return 6;
-                                    case "전승": return 4;
-                                    case "희귀": return 2;
-                                    case "일반": return 1;
+                    } else if (item.type === "방어구") {
+                        if (item.trade) {
+                            if (item.subType === "방패") {
+                                switch (item.grade) {
+                                    case "유일":
+                                        return 6;
+                                    case "전승":
+                                        return 4;
+                                    case "희귀":
+                                        return 2;
+                                    case "일반":
+                                        return 1;
+                                }
+                            } else if (item.subType === "상의") {
+                                switch (item.grade) {
+                                    case "유일":
+                                        return 6;
+                                    case "전승":
+                                        return 4;
+                                    case "희귀":
+                                        return 2;
+                                    case "일반":
+                                        return 1;
+                                }
+                            } else if (item.subType === "하의") {
+                                switch (item.grade) {
+                                    case "유일":
+                                        return 4;
+                                    case "전승":
+                                        return 3;
+                                    case "희귀":
+                                        return 2;
+                                    case "일반":
+                                        return 1;
+                                }
+                            } else {
+                                /*어장신*/
+                                switch (item.grade) {
+                                    case "유일":
+                                        return 3;
+                                    case "전승":
+                                        return 2;
+                                    case "희귀":
+                                        return 1;
+                                    case "일반":
+                                        return 1;
                                 }
                             }
-                            else if(item.subType === "상의"){
-                                switch(item.grade){
-                                    case "유일": return 6;
-                                    case "전승": return 4;
-                                    case "희귀": return 2;
-                                    case "일반": return 1;
+                        } else {
+                            if (item.subType === "방패") {
+                                switch (item.grade) {
+                                    case "유일":
+                                        return 2;
+                                    case "전승":
+                                        return 1;
+                                    case "희귀":
+                                        return 1;
+                                    case "일반":
+                                        return 1;
                                 }
-                            }
-                            else if(item.subType === "하의"){
-                                switch(item.grade){
-                                    case "유일": return 4;
-                                    case "전승": return 3;
-                                    case "희귀": return 2;
-                                    case "일반": return 1;
+                            } else if (item.subType === "상의") {
+                                switch (item.grade) {
+                                    case "유일":
+                                        return 2;
+                                    case "전승":
+                                        return 1;
+                                    case "희귀":
+                                        return 1;
+                                    case "일반":
+                                        return 1;
                                 }
-                            }
-                            else{/*어장신*/
-                                switch(item.grade){
-                                    case "유일": return 3;
-                                    case "전승": return 2;
-                                    case "희귀": return 1;
-                                    case "일반": return 1;
+                            } else if (item.subType === "하의") {
+                                switch (item.grade) {
+                                    case "유일":
+                                        return 2;
+                                    case "전승":
+                                        return 1;
+                                    case "희귀":
+                                        return 1;
+                                    case "일반":
+                                        return 1;
                                 }
-                            }
-                        }
-                        else{
-                            if(item.subType === "방패"){
-                                switch(item.grade){
-                                    case "유일": return 2;
-                                    case "전승": return 1;
-                                    case "희귀": return 1;
-                                    case "일반": return 1;
-                                }
-                            }
-                            else if(item.subType === "상의"){
-                                switch(item.grade){
-                                    case "유일": return 2;
-                                    case "전승": return 1;
-                                    case "희귀": return 1;
-                                    case "일반": return 1;
-                                }
-                            }
-                            else if(item.subType === "하의"){
-                                switch(item.grade){
-                                    case "유일": return 2;
-                                    case "전승": return 1;
-                                    case "희귀": return 1;
-                                    case "일반": return 1;
-                                }
-                            }
-                            else{/*어장신*/
-                                switch(item.grade){
-                                    case "유일": return 1;
-                                    case "전승": return 1;
-                                    case "희귀": return 1;
-                                    case "일반": return 1;
+                            } else {
+                                /*어장신*/
+                                switch (item.grade) {
+                                    case "유일":
+                                        return 1;
+                                    case "전승":
+                                        return 1;
+                                    case "희귀":
+                                        return 1;
+                                    case "일반":
+                                        return 1;
                                 }
                             }
                         }
                     }
                     return null;
                 },
-                getRandom:function(start, end){
+                getRandom: function (start, end) {
                     var s = Math.min(start, end);
                     var e = Math.max(start, end);
                     var range = e - s + 1;
                     var number = Math.floor(Math.random() * range) + s;
                     return number;
                 },
-                getRayleighRandom:function(start, end){
+                getRayleighRandom: function (start, end) {
                     var s = Math.min(start, end);
                     var e = Math.max(start, end);
                     var range = e - s + 1;
                     return Math.floor(Math.sqrt(-2 * Math.log(1 - Math.random())) * range) + s;
                 },
-                getTruncGaussianRandom:function(start, end){
+                getTruncGaussianRandom: function (start, end) {
                     var s = Math.min(start, end);
                     var e = Math.max(start, end);
                     var range = e - s + 1;
                     var rnd = Math.abs(this.getGaussianRandom());
                     var val = Math.floor(rnd * range) + s;
-                    if(val > end) return this.getTruncGaussianRandom(start, end);
+                    if (val > end) return this.getTruncGaussianRandom(start, end);
                     return val;
                 },
-                getGaussianRandom:function(){
+                getGaussianRandom: function () {
                     var v1, v2, s;
 
-                    do{
+                    do {
                         v1 = 2 * Math.random() - 1;
                         v2 = 2 * Math.random() - 1;
                         s = Math.pow(v1, 2) + Math.pow(v2, 2);
                     }
-                    while(s >= 1 || s == 0);
+                    while (s >= 1 || s == 0);
 
-                    s = Math.sqrt( (-2 * Math.log(s)) / s );
+                    s = Math.sqrt((-2 * Math.log(s)) / s);
 
                     var rv = v1 * s;
 
                     return rv;
                 },
 
-                startEnchantProgress:function(second){
-                    if(!this.selectedItem) return;
-                    
+                startEnchantProgress: function (second) {
+                    if (!this.selectedItem) return;
+
                     this.enchantProgress = 0;
                     this.resultItemLevel = null;
-                    
-                    var proc = ()=>{
+
+                    var proc = () => {
                         this.enchantProgress++;
-                        if(this.enchantProgress < 100){
-                            setTimeout(proc, second/100);
-                        }
-                        else{
+                        if (this.enchantProgress < 100) {
+                            setTimeout(proc, second / 100);
+                        } else {
                             setTimeout(this.afterEnchantProgress, 1000);
                         }
                     };
-                    
+
                     setTimeout(proc, 100);
                 },
-                afterEnchantProgress:function(){
-                    if(!this.selectedItem) return;
+                afterEnchantProgress: function () {
+                    if (!this.selectedItem) return;
                     this.resultItemLevel = this.getEnchantResult();
                 },
-                startEnchantProgress2:function(second){
-                    if(!this.selectedItem) return;
-                    
+                startEnchantProgress2: function (second) {
+                    if (!this.selectedItem) return;
+
                     this.enchantProgress = 0;
                     this.currentItemLevel = this.resultItemLevel;
                     this.resultItemLevel = null;
-                    
-                    var proc = ()=>{
+
+                    var proc = () => {
                         this.enchantProgress++;
-                        if(this.enchantProgress < 100){
-                            setTimeout(proc, second/100);
-                        }
-                        else{
+                        if (this.enchantProgress < 100) {
+                            setTimeout(proc, second / 100);
+                        } else {
                             setTimeout(this.afterEnchantProgress, 1000);
                         }
                     };
-                    
+
                     setTimeout(proc, 100);
                 },
 
@@ -731,35 +1517,40 @@
                     희귀 - +10렙을 50%로 설정, 1렙당 2%씩 변동
                     일반 - +5렙을 50%로 설정, 1렙당 2%씩 변동
                 */
-                getEnchantResult:function(){
-                    if(!this.selectedItem) return;
+                getEnchantResult: function () {
+                    if (!this.selectedItem) return;
 
-                    var base = 50;
+                    var rate = 50;
                     var gap = this.enchantStoneLevel - this.selectedItem.level;
-                    switch(this.selectedItem.grade){
-                        case "유일": base += (gap - 20) * 2; break;
-                        case "전승": base += (gap - 15) * 2; break;
-                        case "희귀": base += (gap - 10) * 2; break;
-                        case "일반": base += (gap - 5) * 2; break;
+                    var base;
+                    switch (this.selectedItem.grade) {
+                        case "유일":
+                            base = 20;
+                            break;
+                        case "전승":
+                            base = 15;
+                            break;
+                        case "희귀":
+                            base = 10;
+                            break;
+                        case "일반":
+                            base = 5;
+                            break;
                     }
+                    rate += (gap - base) * 2;
 
-                    //console.log(this.enchantStoneLevel, this.selectedItem.level, base);
-
-                    var result = this.getSuccessOrFail(base);
+                    var result = this.getSuccessOrFail(rate);
                     this.enchantResult = result;
-                    //console.log("result = " + result);
 
-                    if(this.currentItemLevel == 0){
+                    if (this.currentItemLevel == 0) {
                         return result ? 1 : 0;
-                    }
-                    else if(this.currentItemLevel < 10){
+                    } else if (this.currentItemLevel < 10) {
                         return parseInt(this.currentItemLevel) + (result ? 1 : -1);
-                    }
-                    else{
+                    } else {
                         return result ? parseInt(this.currentItemLevel) + 1 : 10;
                     }
                 },
-                getSuccessOrFail:function(rate) {
+                getSuccessOrFail: function (rate) {
                     var n = Math.floor(Math.random() * 100);
                     return n < rate;
                 }
