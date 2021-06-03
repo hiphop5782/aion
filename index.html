@@ -1544,7 +1544,7 @@
 
                     if (this.currentItemLevel == 0) {
                         return result ? 1 : 0;
-                    } else if (this.currentItemLevel < 10) {
+                    } else if (this.currentItemLevel <= 10) {
                         return parseInt(this.currentItemLevel) + (result ? 1 : -1);
                     } else {
                         return result ? parseInt(this.currentItemLevel) + 1 : 10;
