@@ -263,7 +263,7 @@
                         <button class="btn btn-warning" @click="startEnchantProgress" v-if="currentItemLevel < 15"
                             :disabled="resultItemLevel != null && enchantProgress < 100">강화</button>
                         <button class="btn btn-danger" @click="startEnchantProgress2"
-                            v-if="resultItemLevel != null && currentItemLevel < 15">계속 강화</button>
+                            v-if="resultItemLevel != null && currentItemLevel < 15 && resultItemLevel < 15">계속 강화</button>
                     </div>
                 </div>
 
