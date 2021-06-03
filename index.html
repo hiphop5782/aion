@@ -172,13 +172,13 @@
                             <li>희귀 : 미구현</li>
                             <li>일반 : 미구현</li>
                         </ul>
-
+                        
                         <h6>확률분포</h6>
                         <p>현재는 아이템 레벨을 평균으로 한 정규분포 우측 부분만 적용중입니다.</p>
                     </div>
                 </div>
             </div>
-
+            
             <!-- 아이템 강화 -->
             <div v-show="menu[1].active">
                 <div class="row">
@@ -186,7 +186,8 @@
                         <h1>{{menu[1].name}}</h1>
                     </div>
                 </div>
-
+                <hr>
+                
                 <div class="row mt-5">
                     <div class="col-md-3 offset-md-1">
                         <h2>아이템 선택</h2>
@@ -224,7 +225,6 @@
                     </div>
                 </div>
 
-                <hr>
 
                 <div class="row mt-5" v-if="selectedItem">
                     <div class="col-3 offset-1">
