@@ -48,16 +48,21 @@
         .item-slot > img{
             width:100%;
         }
-        #recordViewer > .card.card-body {
+        #recordViewer > .card.card-body{
+            width:500px;
+        }
+        #enchantRecordViewer > .card.card-body{
+            width:550px;
+        }
+        .card.card-body {
             display:flex;
             flex-direction: row;
-            width:400px;
         }
         figure.record-img{
             width:100%;
         }
         figure.record-img > figcaption {
-            font-size: 0.35rem;
+            font-size: 0.25rem;
         }
     </style>
 
@@ -169,7 +174,7 @@
                 <div class="row mt-5">
                     <div class="col-md-10 offset-md-1">
                         <p v-show="record.length > 0">
-                            <a class="btn btn-secondary" data-toggle="collapse" href="#recordViewer" role="button" aria-expanded="false" aria-controls="collapseExample">
+                            <a class="btn btn-secondary" data-toggle="collapse" href="#recordViewer" role="button" aria-expanded="false" aria-controls="recordViewer">
                                 추출 기록 보기
                             </a>
                             <button class="btn btn-danger" @click="clearRecord();">초기화</button>
@@ -272,7 +277,7 @@
                     </div>
                     <div class="col-md-7">
                         <select v-model.number="currentItemLevel" class="form-control">
-                            <option v-for="(v, i) in 16">{{i}}</option>
+                            <option v-for="(v, i) in 15">{{i}}</option>
                         </select>
                     </div>
                 </div>
@@ -339,10 +344,8 @@
                     </div>
                     <div class="col-md-5 text-right" v-if="enchantReady">
                         <button class="btn btn-outline-secondary" @click="clearEnchantResult();">초기화</button>
-                        <button class="btn btn-warning" @click="startEnchantProgress" v-if="currentItemLevel < 15"
-                            :disabled="resultItemLevel != null && enchantProgress < 100">강화</button>
-                        <button class="btn btn-danger" @click="startEnchantProgress2"
-                            v-if="resultItemLevel != null && currentItemLevel < 15 && resultItemLevel < 15">계속 강화</button>
+                        <button class="btn btn-warning" @click="startEnchantProgress" :disabled="isEnchantFinished">강화</button>
+                        <button class="btn btn-danger" @click="startEnchantProgress2" :disabled="isEnchantFinished || enchantRecord.length == 0">계속 강화</button>
                     </div>
                 </div>
 
@@ -358,6 +361,51 @@
                         </h6>
                     </div>
                 </div>
+
+                <div class="row mt-5">
+                    <div class="col-md-10 offset-md-1">
+                        <p v-show="enchantRecord.length > 0">
+                            <a class="btn btn-secondary" data-toggle="collapse" href="#enchantRecordViewer" role="button" aria-expanded="false" aria-controls="enchantRecordViewer">
+                                강화 기록 보기
+                            </a>
+                            <button class="btn btn-danger" @click="clearEnchantRecord();">기록 초기화</button>
+                        </p>
+                        <div class="collapse" id="enchantRecordViewer">
+                            <div class="card card-body" v-for="rec in enchantRecord">
+                                <div class="col">
+                                    <figure class="record-img">
+                                        <img class="figure-img img-thumbnail" :src="rec.item.image">
+                                        <figcaption class="figure-caption text-center">
+                                            +{{rec.before}}
+                                            {{rec.item.name}}
+                                        </figcaption>
+                                        <figcaption class="lev">+{{rec.before}}</figcaption>
+                                    </figure>
+                                </div>
+                                <div class="col">
+                                    <figure class="record-img">
+                                        <img class="figure-img img-thumbnail"
+                                            :src="'./image/item_stone_'+(parseInt((rec.stone-1) / 20))+'.png'">
+                                        <figcaption class="figure-caption text-center">
+                                            {{rec.stone}}레벨 강화석
+                                        </figcaption>
+                                    </figure>
+                                </div>
+                                <div class="col">
+                                    <figure class="record-img">
+                                        <img class="figure-img img-thumbnail" :src="rec.item.image">
+                                        <figcaption class="figure-caption text-center">
+                                            +{{rec.after}}
+                                            {{rec.item.name}}
+                                        </figcaption>
+                                        <figcaption class="lev">+{{rec.after}}</figcaption>
+                                    </figure> 
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <hr>
                 <div class="row">
                     <div class="col-md-10 offset-md-1">
@@ -497,11 +545,11 @@
                 title: "GENIUS 레기온",
                 menu: [{
                         name: "장비 추출",
-                        active: true
+                        active: false
                     },
                     {
                         name: "장비 강화",
-                        active: false
+                        active: true
                     },
                     {
                         name: "마석 강화",
@@ -527,6 +575,7 @@
                     success:0,
                     fail:0
                 },
+                enchantRecord:[],
 
                 socketCount: 4,
                 socketItem:[false, false, false, false],
@@ -561,6 +610,9 @@
                         return "마석 강화 성공";
                     else
                         return "마석 강화 실패";
+                },
+                isEnchantFinished:function(){
+                    return this.resultItemLevel != null && this.resultItemLevel == 15;
                 },
             },
             watch: {
@@ -920,6 +972,14 @@
                     if (!this.selectedItem) return;
                     this.enchantProgress = 100;
                     this.resultItemLevel = this.getEnchantResult();
+
+                    //기록 추가
+                    this.enchantRecord.push({
+                        item:Object.assign({}, this.selectedItem),
+                        stone:this.enchantStoneLevel,
+                        before:this.currentItemLevel,
+                        after:this.resultItemLevel
+                    });
                 },
                 startEnchantProgress2: function (second) {
                     if (!this.selectedItem) return;
@@ -946,7 +1006,13 @@
                     this.enchantCount.total = 0;
                     this.enchantCount.success = 0;
                     this.enchantCount.fail = 0;
+                    this.clearEnchantRecord();
                 },
+
+                clearEnchantRecord:function(){
+                    this.enchantRecord = [];
+                },
+
                 /*
                     아이템 강화
                     
