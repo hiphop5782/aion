@@ -49,10 +49,12 @@
             width:100%;
         }
         #recordViewer > .card.card-body{
-            width:500px;
+            width:100%;
+            max-width:500px;
         }
         #enchantRecordViewer > .card.card-body{
-            width:550px;
+            width:100%;
+            max-width:550px;
         }
         .card.card-body {
             display:flex;
@@ -80,7 +82,7 @@
     <div id="app" style="margin-bottom: 200px;">
         <nav class="navbar navbar-expand-md bg-dark navbar-dark">
             <!-- Brand -->
-            <a class="navbar-brand" href="https://aion.plaync.com/legions/server/24/id/2548/home">GENIUS Legion</a>
+            <a class="navbar-brand" href="https://aion.plaync.com/legions/server/24/id/2548/home">The Genius Legion</a>
 
             <!-- Toggler/collapsibe Button -->
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
@@ -545,11 +547,11 @@
                 title: "GENIUS 레기온",
                 menu: [{
                         name: "장비 추출",
-                        active: false
+                        active: true
                     },
                     {
                         name: "장비 강화",
-                        active: true
+                        active: false
                     },
                     {
                         name: "마석 강화",
